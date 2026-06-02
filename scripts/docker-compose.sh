@@ -8,6 +8,12 @@ if [ ! -f "$ENV_FILE" ]; then
   ENV_FILE=".env.example"
 fi
 
-eval "$(python3 scripts/worktree-ports.py export)"
+PORT_ENV_FILE="$(mktemp)"
+trap 'rm -f "$PORT_ENV_FILE"' EXIT HUP INT TERM
+python3 scripts/worktree-ports.py env > "$PORT_ENV_FILE"
 
-exec docker compose -f compose.yml --env-file "$ENV_FILE" "$@"
+if [ "$ENV_FILE" = ".env" ]; then
+  exec docker compose -f compose.yml --env-file .env.example --env-file "$PORT_ENV_FILE" --env-file .env "$@"
+fi
+
+exec docker compose -f compose.yml --env-file .env.example --env-file "$PORT_ENV_FILE" "$@"
