@@ -51,3 +51,7 @@ bun install --frozen-lockfile
 uv sync --locked
 pnpm install --frozen-lockfile
 ```
+
+Renovate should use `minimumReleaseAge = "7 days"` so dependency PRs do not fight package-manager cooldowns.
+
+Security workflows should include secret scanning and dependency review for pull requests.

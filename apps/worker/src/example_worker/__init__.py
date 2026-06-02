@@ -1,1 +1,0 @@
-"""Template worker service."""

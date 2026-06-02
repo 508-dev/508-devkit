@@ -19,9 +19,8 @@
 
 ## Repository Shape
 
-- `apps/api`: Python HTTP API.
+- `apps/api`: minimal Python wiring example.
 - `apps/web`: framework-neutral Bun/TypeScript workspace for web-side conventions.
-- `apps/worker`: Python background jobs.
 - `packages/shared`: shared Python settings, schemas, and helpers.
 - `scripts`: stable project entrypoints.
 - `docs`: contributor-facing documentation.
@@ -34,6 +33,7 @@
 - Use `./scripts/worktree-ports.py env` to inspect local ports.
 - Use `./scripts/docker-compose.sh` instead of raw `docker compose` for local worktree-safe infra.
 - Use `./scripts/dev.sh` for host-run app services.
+- Treat `apps/*` as disposable wiring examples, not framework code to cargo-cult into every project.
 - Do not assume a frontend framework from this devkit. Choose Next.js, Vite, TanStack Start, Astro, Expo, or no frontend based on the target project.
 - Keep `.worktreeinclude` as a short allowlist of ignored local config to copy into sibling worktrees, such as `.env`, `.env.local`, and `.sops.yaml`.
 - Keep `.dockerignore` in sync with the repo shape so Docker build contexts exclude secrets, local dependencies, caches, `.context/`, and generated outputs.

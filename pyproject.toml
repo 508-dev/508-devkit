@@ -5,7 +5,6 @@ description = "Python workspace for the 508 Devkit template."
 requires-python = ">=3.12"
 dependencies = [
   "example-api",
-  "example-worker",
   "example-shared",
 ]
 
@@ -18,13 +17,11 @@ exclude-newer = "7 days"
 
 [tool.uv.sources]
 example-api = { workspace = true }
-example-worker = { workspace = true }
 example-shared = { workspace = true }
 
 [tool.uv.workspace]
 members = [
   "apps/api",
-  "apps/worker",
   "packages/shared",
 ]
 
@@ -45,9 +42,8 @@ target-version = "py312"
 src = [
   "apps/api/src",
   "apps/api/tests",
-  "apps/worker/src",
-  "apps/worker/tests",
   "packages/shared/src",
+  "tests",
 ]
 
 [tool.ruff.lint]
@@ -56,7 +52,7 @@ select = ["E", "F", "I", "UP", "B", "SIM"]
 [tool.pytest.ini_options]
 testpaths = [
   "apps/api/tests",
-  "apps/worker/tests",
+  "tests",
 ]
 python_files = ["test_*.py"]
 python_classes = ["Test*"]
@@ -75,13 +71,12 @@ namespace_packages = true
 explicit_package_bases = true
 mypy_path = [
   "apps/api/src",
-  "apps/worker/src",
   "packages/shared/src",
 ]
 files = [
   "apps/api/src",
-  "apps/worker/src",
   "packages/shared/src",
+  "tests",
 ]
 check_untyped_defs = true
 warn_unused_ignores = true
@@ -90,7 +85,7 @@ no_implicit_optional = true
 ignore_missing_imports = true
 
 [tool.coverage.run]
-source = ["example_api", "example_worker", "example_shared"]
+source = ["example_api", "example_shared"]
 omit = ["*/tests/*"]
 
 [tool.coverage.report]

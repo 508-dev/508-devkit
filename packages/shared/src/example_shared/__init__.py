@@ -1,1 +1,1 @@
-"""Shared contracts for the template workspace."""
+"""Shared contracts and runtime helpers for the template workspace."""

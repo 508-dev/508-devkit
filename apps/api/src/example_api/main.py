@@ -3,12 +3,14 @@ from __future__ import annotations
 import uvicorn
 from fastapi import FastAPI
 
+from example_shared.observability import configure_logging
 from example_shared.schemas import HealthResponse
 from example_shared.settings import get_settings
 
 
 def create_app() -> FastAPI:
     settings = get_settings()
+    configure_logging(settings.log_level)
     app = FastAPI(title="508 Devkit API")
 
     @app.get("/health", response_model=HealthResponse)

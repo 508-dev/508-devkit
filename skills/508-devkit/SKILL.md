@@ -2,9 +2,14 @@
 
 Use this skill when creating or normalizing a 508.dev repository.
 
+Last reviewed: 2026-06-02
+
+Preserve the devkit's topology and policy, but verify current versions, action SHAs, and API documentation before applying them to a target repo.
+
 ## Workflow
 
 1. Inspect the target repo first:
+   - `DECISIONS.md` when present.
    - `AGENTS.md`, `CLAUDE.md`, Cursor rules.
    - `pyproject.toml`, `uv.lock`.
    - `package.json`, `bun.lock`, `pnpm-lock.yaml`, `bunfig.toml`, `pnpm-workspace.yaml`.

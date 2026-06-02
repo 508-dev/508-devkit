@@ -26,8 +26,7 @@ It is optimized for:
 ├── .github/workflows/
 ├── apps/
 │   ├── api/
-│   ├── web/
-│   └── worker/
+│   └── web/
 ├── packages/
 │   └── shared/
 ├── docs/
@@ -47,7 +46,7 @@ It is optimized for:
 ## Alternative Paths
 
 - For very large JS monorepos, pnpm is still an acceptable fallback.
-- For static sites, drop `apps/api`, `apps/worker`, Postgres, and Redis.
+- For static sites, drop `apps/api`, Postgres, and Redis.
 - For Python-only repos, drop pnpm workspace files and web CI.
 - For product repos with browser UI, add Playwright after the first interactive flow exists.
 - For LLM features, add deterministic eval fixtures before live model evals.

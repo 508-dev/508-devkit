@@ -1,5 +1,7 @@
 # 508 Devkit
 
+Last reviewed: 2026-06-02
+
 Opinionated sane defaults and conventions for 508.dev projects.
 
 This is not a scaffolding CLI. It is a reference repo that gives agents and humans a shared baseline for how new projects should be shaped: repository layout, local development, dependency safety, CI, agent instructions, operational memory, and documentation.
@@ -20,6 +22,7 @@ Point an agent at this repo when starting or normalizing a project. The agent sh
 - `.worktreeinclude` for copying local-only env files into sibling worktrees.
 - `.dockerignore` for small, secret-safe Docker build contexts.
 - GitHub PR, issue, and CI hygiene.
+- Security scanning and dependency update policy.
 - Pydantic settings and schemas.
 - Alembic migrations for Python services.
 - Drizzle ORM for TypeScript services.
@@ -62,9 +65,8 @@ bun install --frozen-lockfile
 ## Layout
 
 ```text
-apps/api        Python HTTP API, Pydantic settings, SQLAlchemy/Alembic
-apps/web        Framework-neutral TypeScript workspace, Drizzle, Biome, Vitest
-apps/worker     Python background worker
+apps/api        Minimal Python wiring example, Pydantic settings, SQLAlchemy/Alembic
+apps/web        Framework-neutral TypeScript wiring example, Drizzle, Biome, Vitest
 packages/shared Shared Python contracts and helpers
 scripts         Stable human/agent entrypoints
 docs            Durable project documentation
@@ -73,13 +75,14 @@ docs            Durable project documentation
 
 ## Read Next
 
-1. Read `docs/pattern-report.md`.
-2. Read `docs/template-proposal.md`.
-3. Read `docs/frontend.md`.
-4. Copy `.env.example` to `.env`.
-5. Run `./scripts/worktree-ports.py env`.
-6. Run `./scripts/docker-compose.sh up -d postgres redis`.
-7. Run `./scripts/dev.sh`.
+1. Read `DECISIONS.md`.
+2. Read `docs/pattern-report.md`.
+3. Read `docs/template-proposal.md`.
+4. Read `docs/frontend.md`.
+5. Copy `.env.example` to `.env`.
+6. Run `./scripts/worktree-ports.py env`.
+7. Run `./scripts/docker-compose.sh up -d postgres redis`.
+8. Run `./scripts/dev.sh`.
 
 ## Worktree And Docker Hygiene
 
@@ -99,12 +102,16 @@ This repository intentionally includes files that conflict with each other. It i
 
 - `alternates/pnpm/`: pnpm root files and CI fragment.
 - `alternates/dev-scripts/`: JS-first script variants for repos that do not want Python helpers.
+- `alternates/dockerfiles/`: opt-in Dockerfile examples for deployment parity.
+- `alternates/devcontainer/`: opt-in dev container example.
 - `alternates/github/`: CODEOWNERS and discussion templates that need project-specific owners or support policy.
 - `alternates/todo-to-issue/`: opt-in workflow for turning TODO comments into GitHub issues.
 - `.sops.yaml.example`: optional SOPS starter only for repos that need encrypted files.
 
-Keep root defaults for most new projects: Bun, `uv`, shell wrappers, Python worktree ports, and Compose-managed infra.
+Keep root defaults for most new projects: Bun, `uv`, shell wrappers, Python worktree ports, and Compose-managed infra. Treat `apps/*` as wiring examples to regenerate or adapt, not product code to copy blindly.
 
 ## Skill Interface
 
 The repository is the source of truth. The downloadable skill in `skills/508-devkit/SKILL.md` is the agent-facing interface that explains how to apply these files to a target repo.
+
+Task-shaped skills in `skills/*/SKILL.md` capture repeatable workflows such as migration creation, service creation, context promotion, and CI triage.

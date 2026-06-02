@@ -6,7 +6,7 @@ cd "$(dirname "$0")/.."
 eval "$(python3 scripts/worktree-ports.py export)"
 export API_HOST="${API_HOST:-127.0.0.1}"
 export WEB_HOST="${WEB_HOST:-127.0.0.1}"
-export PYTHONPATH="${PYTHONPATH:-apps/api/src:apps/worker/src:packages/shared/src}"
+export PYTHONPATH="${PYTHONPATH:-apps/api/src:packages/shared/src}"
 
 echo "508 Devkit local stack"
 echo "  API: http://${API_HOST}:${API_PORT}"
@@ -19,7 +19,6 @@ echo
 
 cleanup() {
   if [ -n "${API_PID:-}" ]; then kill "$API_PID" 2>/dev/null || true; fi
-  if [ -n "${WORKER_PID:-}" ]; then kill "$WORKER_PID" 2>/dev/null || true; fi
   if [ -n "${WEB_PID:-}" ]; then kill "$WEB_PID" 2>/dev/null || true; fi
 }
 trap cleanup INT TERM EXIT
@@ -33,10 +32,7 @@ uv run --package example-api uvicorn example_api.main:create_app \
   --reload-dir packages/shared/src &
 API_PID=$!
 
-uv run --package example-worker worker-consumer &
-WORKER_PID=$!
-
 bun run --cwd apps/web dev &
 WEB_PID=$!
 
-wait "$API_PID" "$WORKER_PID" "$WEB_PID"
+wait "$API_PID" "$WEB_PID"
