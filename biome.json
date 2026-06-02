@@ -3,7 +3,7 @@
   "root": true,
   "files": {
     "ignoreUnknown": true,
-    "includes": ["**", "!**/.venv", "!**/.mypy_cache", "!**/.pytest_cache"]
+    "includes": ["**", "!**/.venv", "!**/.claude", "!**/.mypy_cache", "!**/.pytest_cache"]
   },
   "formatter": {
     "enabled": true,

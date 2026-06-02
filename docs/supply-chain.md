@@ -2,7 +2,8 @@
 
 ## Bun
 
-Default for new JavaScript projects.
+Shown first for JavaScript projects because it is fast and simple. This is an
+example preference, not a universal requirement.
 
 `bunfig.toml`:
 
@@ -17,19 +18,49 @@ linker = "isolated"
 
 ## uv
 
-`pyproject.toml`:
+Use this when a project selects the Python stack or otherwise has a Python workspace.
+
+Relative dependency cooldowns require uv `0.9.17` or newer. Before adding
+`exclude-newer = "P7D"` to a downstream repo, agents should run:
+
+```bash
+uv --no-config --version
+```
+
+Use `--no-config` for the version check because a broken user-level
+`~/.config/uv/uv.toml` can otherwise fail before the project is inspected.
+
+If uv is older than `0.9.17`, ask the user whether they want to upgrade uv. Do
+not write relative values such as `P7D` or `7 days` into `pyproject.toml`,
+`uv.toml`, or `~/.config/uv/uv.toml` until the installed uv supports them. Older
+uv releases parse those strings as dates and fail during settings discovery.
+
+Optional `pyproject.toml` cooldown for compatible uv clients:
 
 ```toml
 [tool.uv]
-exclude-newer = "7 days"
+exclude-newer = "P7D"
 
 [tool.uv.pip]
-exclude-newer = "7 days"
+exclude-newer = "P7D"
 ```
 
-## pnpm Fallback
+The Python stack does not commit this relative cooldown by default because
+older uv clients parse persistent config during settings discovery and fail
+before they can run a locked install. Regenerate `uv.lock` with a compatible
+`uv` version after adding the setting so the lock records
+`exclude-newer-span = "P7D"`. Older `uv` releases and Docker images must be
+upgraded before using this relative cooldown.
 
-Use only when the JS workspace grows large enough to justify switching away from Bun.
+If the user declines an upgrade, leave the relative cooldown out of persistent
+uv config and document the exception. An absolute RFC 3339 timestamp is
+compatible with older uv, but it is a fixed cutoff, not a rolling seven-day
+cooldown.
+
+## pnpm
+
+Use when the team prefers pnpm, the repo already uses pnpm, or the workspace
+needs pnpm-specific monorepo behavior.
 
 `pnpm-workspace.yaml`:
 
@@ -54,4 +85,13 @@ pnpm install --frozen-lockfile
 
 Renovate should use `minimumReleaseAge = "7 days"` so dependency PRs do not fight package-manager cooldowns.
 
-Security workflows should include secret scanning and dependency review for pull requests.
+Security workflows are opt-in extras:
+
+- Add `extras/github/gitleaks.yml.example` only when maintainers want CI history
+  scanning for secrets and have a plan to handle baseline findings.
+- Add `extras/github/dependency-review.yml.example` only after confirming the
+  target repo uses GitHub's dependency graph and wants known-vulnerability,
+  license, or dependency-change reporting.
+
+Cooldowns, locked installs, committed lockfiles, and least-privilege CI remain
+the default supply-chain defenses.

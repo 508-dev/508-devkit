@@ -10,7 +10,7 @@ The scan found 32 Git repositories. The strongest repeated signals were:
 | --- | ---: | --- |
 | Python or `uv` project metadata | 13 | `pyproject.toml` plus `uv.lock` appears across backend, worker, pipeline, and agent/tooling repos. |
 | Node package metadata | 17 | Large monorepos lean `pnpm`; smaller single-app repos frequently use Bun. |
-| Docker Compose | 10 | Most Compose files provide infrastructure services first, especially Postgres and Redis. |
+| Docker Compose | 10 | Most Compose files provide infrastructure services first, often databases or caches such as Postgres and Redis. |
 | GitHub Actions workflows | 20 | Common CI shape is lint, typecheck, test, and deploy workflows split by changed area. |
 | Pre-commit config | 6 | Most Python-heavy repos use Ruff hooks; some also run MyPy through local scripts. |
 | Agent instruction files | 14 | `AGENTS.md` is common for Codex. `CLAUDE.md` is present in several repos. |
@@ -39,9 +39,7 @@ Representative repositories inspected more deeply:
   - Pytest for backend and worker tests.
   - Coverage for mature service repos.
 - `508-workflows` uses a `uv` workspace with `apps/*` and `packages/shared`.
-- Dependency cooldown appears in `508-workflows` through:
-  - `[tool.uv] exclude-newer = "7 days"`
-  - `[tool.uv.pip] exclude-newer = "7 days"`
+- Dependency cooldown appears in `508-workflows`; use `exclude-newer = "P7D"` only after checking `uv --no-config --version` is `0.9.17` or newer, and regenerate `uv.lock` so it records `exclude-newer-span = "P7D"`.
 
 ### JavaScript and TypeScript
 
@@ -59,7 +57,7 @@ Representative repositories inspected more deeply:
   - `test`
   - `ports`
 
-Template decision after user preference: default to Bun for new projects. Document pnpm as the fallback for very large workspaces that need its mature monorepo ergonomics.
+Template decision after user preference: show Bun first for new JavaScript examples while keeping pnpm first-class for teams or workspaces that prefer its mature monorepo ergonomics.
 
 ### Docker Compose and Infra
 
@@ -69,18 +67,22 @@ Common services:
 
 - `postgres`
 - `redis`
-- Optional object storage, especially MinIO in `508-workflows`.
+- Optional object storage in projects that explicitly need it.
 - Optional observability stacks in larger repos, such as HyperDX or OTEL endpoints.
 
 Common Compose practices:
 
-- Healthchecks on Postgres and Redis.
+- Healthchecks on local infrastructure services.
 - Host ports controlled by environment variables.
 - Fixed container ports with variable published host ports.
 - Volumes for durable local data.
 - `compose.yml` or `compose.yaml` as the canonical file, with occasional `docker-compose.yml` compatibility wrappers.
 
-Template decision: include Postgres and Redis by default, plus optional MinIO behind a Compose profile.
+Template decision: include Postgres and Redis as concrete Compose examples, but
+make clear they are replaceable and not a universal requirement. Keep object
+storage out of the root template unless a target repo explicitly needs it. Keep
+the MinIO pattern as a very opt-in `extras/object-storage/` example because
+server/client image behavior has been a source of downstream friction.
 
 ### Local Development
 
@@ -94,13 +96,15 @@ Examples:
 - `asiatraveldeals` uses `scripts/run-local.sh` to start Compose infra and host-run API/web services.
 - `favorite-places`, `house-calendar`, `voy`, and `asiatraveldeals` include deterministic worktree port allocation.
 
-Template decision: include dependency-free `scripts/worktree-ports.py`, `scripts/dev.sh`, and `scripts/docker-compose.sh`.
+Template decision: include dependency-free `scripts/worktree-ports.sh`, `scripts/dev.sh`, and `scripts/docker-compose.sh`. Keep the Python port helper in `stacks/python/` for Python-first repos.
 
 ### Worktree Support and Ports
 
 Recurring approach:
 
 - Hash the absolute worktree path.
+- Respect generic reserved port inputs when a worktree orchestrator provides
+  them.
 - Reserve the main checkout or default block where applicable.
 - Derive stable port offsets for sibling worktrees.
 - Avoid browser-restricted ports.
@@ -118,7 +122,10 @@ Common variable names:
 - `POSTGRES_URL`
 - `REDIS_URL`
 
-Template decision: allocate a block of ports per worktree and emit API, web, worker health, Postgres, Redis, MinIO, and OTEL ports.
+Template decision: allocate a block of ports per worktree and emit API, web,
+worker health, database, cache, and OTEL example ports. Keep orchestrator-specific
+port environment variables out of reusable helpers; map them to
+`WORKTREE_PORT_BLOCK_START` or `WORKTREE_PRIMARY_PORT` in wrapper scripts.
 
 ### GitHub Actions
 
@@ -134,7 +141,7 @@ Common workflow traits:
 - Include deployment workflows separately from validation workflows.
 - Use concurrency groups for larger deploy/preview workflows.
 
-Template decision: include one CI workflow with changed-area detection and jobs for Python, web, and Compose smoke checks.
+Template decision: include one CI workflow with changed-area detection and jobs for root web/tooling checks, Python stack checks, and Compose smoke checks.
 
 ### Environment Variables
 
@@ -208,7 +215,7 @@ Template decision: include unit test placeholders, marker conventions, and docs 
 The template should not be a generator. It should be a compact source of truth that agents can read, adapt, and extend:
 
 - Agent docs at the root: `AGENTS.md`, `CLAUDE.md`, Cursor rules.
-- Operational memory in `.context/`.
+- Gitignored workspace-local `.context/` for agent scratch, with durable knowledge promoted into tracked docs.
 - Clear repo layout and boundaries.
 - Minimal but real manifests and scripts.
 - Locked-install and dependency-cooldown defaults.

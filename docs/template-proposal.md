@@ -7,6 +7,7 @@ This template captures recurring conventions from existing repositories so codin
 It is optimized for:
 
 - Codex: `AGENTS.md`, `.context/`, explicit scripts, surgical edit guidance.
+- Conductor: gitignored `.context/` for workspace-local agent scratch.
 - Claude Code: `CLAUDE.md` as a short pointer to canonical rules.
 - Cursor: `.cursor/rules/repo-conventions.mdc`.
 - Future agents: documented boundaries, deterministic commands, and machine-readable structure.
@@ -18,26 +19,24 @@ It is optimized for:
 ├── AGENTS.md
 ├── CLAUDE.md
 ├── README.md
-├── .context/
-│   ├── architecture/
-│   ├── decisions/
-│   └── runbooks/
 ├── .cursor/rules/
 ├── .github/workflows/
-├── apps/
-│   ├── api/
-│   └── web/
-├── packages/
-│   └── shared/
+├── stacks/
+│   ├── python/
+│   ├── typescript/
+│   ├── go/
+│   └── rust/
+├── extras/
 ├── docs/
 └── scripts/
 ```
 
 ## Defaults
 
-- Python: `uv`, Ruff, MyPy, Pytest.
-- JavaScript: Bun, Biome, TypeScript, Vitest.
-- Infra: Docker Compose for Postgres and Redis.
+- Repository tooling: Bun, Biome, TypeScript, Vitest.
+- Optional Python stack: `uv`, Ruff, MyPy, Pytest.
+- Infra: Docker Compose examples for local databases, caches, or similar
+  services.
 - Local dev: host-run app services with Docker-managed infra.
 - Ports: stable worktree-derived allocations.
 - CI: frozen installs, area-aware checks, lint/type/test parity.
@@ -45,9 +44,10 @@ It is optimized for:
 
 ## Alternative Paths
 
-- For very large JS monorepos, pnpm is still an acceptable fallback.
-- For static sites, drop `apps/api`, Postgres, and Redis.
-- For Python-only repos, drop pnpm workspace files and web CI.
+- For Python APIs, workers, or shared packages, copy `stacks/python/`.
+- For Go, Rust, or other runtimes, add matching `stacks/<runtime>/` directories instead of changing the root base.
+- For very large JS monorepos, pnpm is a first-class option.
+- For static sites, drop database and cache services.
 - For product repos with browser UI, add Playwright after the first interactive flow exists.
 - For LLM features, add deterministic eval fixtures before live model evals.
 

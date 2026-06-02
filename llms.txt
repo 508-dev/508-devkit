@@ -1,6 +1,6 @@
 # 508 Devkit
 
-508 Devkit is an opinionated reference repo of sane defaults and conventions for 508.dev projects.
+508 Devkit is an opinionated reference repo of sane defaults and conventions for software projects. It comes from 508.dev practice, but it is meant to be useful outside 508.dev too.
 
 ## Start Here
 
@@ -14,13 +14,16 @@
 
 ## Key Conventions
 
-- Use `uv` for Python workspaces.
-- Use Bun for JavaScript package management unless the target repo needs pnpm.
+- Use `uv` for Python workspaces when the Python stack is selected.
+- Check `uv --no-config --version` before adding `exclude-newer = "P7D"`; ask
+  before upgrading uv if the target has a version older than `0.9.17`.
+- Show Bun first for JavaScript examples, but treat pnpm as first-class when a
+  repo or team prefers it.
 - Keep frontend framework choice out of root defaults.
 - Run app services on the host and infrastructure in Docker Compose.
-- Use deterministic worktree ports from `scripts/worktree-ports.py`.
-- Keep `.context/` for operational memory, not user-facing docs.
-- Put opt-in or team-specific choices in `alternates/`.
+- Use deterministic worktree ports from `scripts/worktree-ports.sh`.
+- Keep `.context/` gitignored and workspace-local; durable knowledge belongs in tracked docs.
+- Put language/runtime conventions in `stacks/` and opt-in add-ons in `extras/`.
 
 ## Validation
 

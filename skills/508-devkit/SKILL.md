@@ -1,35 +1,69 @@
 # 508 Devkit
 
-Use this skill when creating or normalizing a 508.dev repository.
+Use this skill when creating or normalizing a software project with 508 Devkit
+conventions.
 
-Last reviewed: 2026-06-02
+Last reviewed: 2026-06-03
 
-Preserve the devkit's topology and policy, but verify current versions, action SHAs, and API documentation before applying them to a target repo.
+Preserve the devkit's topology and policy, but verify current versions, action
+SHAs, and API documentation before applying them to a target repo.
+
+Canonical repo: https://github.com/508-dev/508-devkit
+
+## Current Shape
+
+- Root files provide broadly useful hygiene: agent instructions, shell
+  entrypoints, worktree-safe ports, Docker Compose examples, GitHub templates,
+  dependency cooldowns, and docs.
+- `stacks/` contains language/runtime convention packs. TypeScript and Python
+  are examples, not universal defaults.
+- `extras/` contains opt-in add-ons such as Dockerfiles, dev containers,
+  object storage, CODEOWNERS, Gitleaks, Dependency Review, and TODO-to-issue.
+- `.context/` is workspace-local agent scratch and must not be committed.
 
 ## Workflow
 
 1. Inspect the target repo first:
    - `DECISIONS.md` when present.
    - `AGENTS.md`, `CLAUDE.md`, Cursor rules.
-   - `pyproject.toml`, `uv.lock`.
+   - `pyproject.toml`, `uv.lock` when Python is present.
    - `package.json`, `bun.lock`, `pnpm-lock.yaml`, `bunfig.toml`, `pnpm-workspace.yaml`.
    - Compose files.
    - `.github/workflows`.
    - `.env.example`.
    - `scripts/`.
-2. Decide which devkit pieces apply:
-   - Bun default for new JS projects.
-   - pnpm alternate for large JS workspaces.
-   - Python `uv` workspace when backend, worker, or scripts exist.
-   - Framework-neutral web conventions unless the target repo already chose a frontend framework.
-   - Docker Compose for Postgres/Redis infra.
-   - Worktree ports for local parallel worktrees.
-   - `.worktreeinclude` for ignored local config copied into sibling worktrees.
-   - `.dockerignore` for small, secret-safe Docker build contexts.
-   - GitHub PR and issue templates for lightweight collaboration hygiene.
-   - Pydantic settings and Alembic for Python service data.
-   - Drizzle for TypeScript service data.
-   - Optional SOPS only when encrypted repo files are needed.
+2. Decide which devkit pieces apply. Do not infer a language, framework,
+   database, ORM, migration tool, object store, or package manager from the
+   devkit alone.
+   - Start with broadly useful repo hygiene: agent instructions, stable scripts,
+     `.dockerignore` when Docker/build contexts exist, GitHub PR/issue
+     templates when the repo uses GitHub, and docs that match the target repo.
+   - Use TypeScript stack examples only when the target repo is JavaScript or
+     TypeScript. Bun is shown first, but pnpm is first-class when the repo or
+     team prefers it.
+   - Use the Python stack only when the target repo is Python or the user asks
+     for Python conventions. Treat Pydantic settings and Alembic migrations as
+     examples, not requirements.
+   - Use Drizzle examples only when TypeScript-side database access is wanted
+     and Drizzle fits the repo. Keep an existing data-access layer when one is
+     already established.
+   - Use framework-neutral frontend conventions only to avoid choosing a
+     frontend framework prematurely.
+   - Use Docker Compose examples only when local infrastructure is needed.
+     Replace or remove Postgres and Redis when the target repo uses different
+     infrastructure.
+   - Use worktree ports when the repo benefits from parallel local worktrees or
+     agent workspaces.
+   - Use `.worktreeinclude` only for ignored local config that should follow
+     sibling worktrees.
+   - Use `extras/object-storage/` only when the target repo explicitly needs
+     local S3-compatible storage.
+   - Use Gitleaks only when the repo owner wants CI secret scanning and is ready
+     to handle baseline findings.
+   - Use Dependency Review only when the repo owner wants GitHub dependency
+     graph-based vulnerability, license, or dependency-change reporting and has
+     enabled the dependency graph.
+   - Use SOPS only when encrypted tracked files are needed.
 3. Copy or adapt files from the `508-devkit` repository.
 4. Update names, package scopes, ports, and docs to fit the target project.
 5. Run the narrowest relevant checks.
@@ -40,9 +74,23 @@ Keep `.worktreeinclude` as a short allowlist. Good examples are `.env`, `.env.lo
 
 Keep `.dockerignore` broad enough to exclude `.git`, `.context`, local secrets, dependency directories, caches, logs, and build outputs. Preserve explicit exceptions for committed templates such as `.env.example`.
 
+Keep worktree port helpers generic. If the target workspace orchestrator exposes
+a reserved port block, map it to `WORKTREE_PORT_BLOCK_START` and optionally
+`WORKTREE_PORT_BLOCK_SIZE` before running scripts. If it exposes one public
+port, map it to `WORKTREE_PRIMARY_PORT` and set `WORKTREE_PRIMARY_PORT_TARGET`
+to `WEB_PORT` or `API_PORT`.
+
+Root Compose services are examples for local infrastructure such as databases
+and caches. Replace or remove Postgres and Redis when the target repo uses
+something else. Do not add object storage from root defaults.
+
+When selecting the Python stack and copying its `scripts/dev.sh`, also copy
+`stacks/python/scripts/worktree-ports.py` or adapt the script to the root shell
+port helper.
+
 ## Frontend Frameworks
 
-Do not infer a frontend framework from this devkit. Root `apps/web` is a TypeScript convention workspace, not a finished Vite, Next.js, or TanStack app.
+Do not infer a frontend framework from this devkit. `stacks/typescript` is a TypeScript convention workspace, not a finished Vite, Next.js, or TanStack app.
 
 When applying the devkit, inspect the target repo and ask when needed. Choose a framework only when the product shape and deployment target make it clear. Map neutral env names such as `WEB_API_BASE_URL` into framework-specific public env names after that choice.
 
@@ -50,8 +98,29 @@ When applying the devkit, inspect the target repo and ask when needed. Choose a 
 
 Use the root `.github/` templates as defaults for most repositories. Keep PR and issue templates short enough that they improve collaboration without adding process overhead.
 
-Keep CODEOWNERS, discussion templates, and TODO-to-issue automation opt-in. Copy them from `alternates/` only after replacing placeholder owners, confirming the support workflow, or accepting the workflow permissions.
+Keep CODEOWNERS, discussion templates, and TODO-to-issue automation opt-in. Copy them from `extras/` only after replacing placeholder owners, confirming the support workflow, or accepting the workflow permissions.
+
+Do not copy security extras by default. Use `extras/github/gitleaks.yml.example`
+only after confirming maintainers want CI secret scanning. Use
+`extras/github/dependency-review.yml.example` only after confirming GitHub's
+dependency graph is enabled and the repo owner wants that reporting. Dependency
+Review is not the primary supply-chain attack detector.
+
+Use `extras/object-storage/compose.object-storage.yml.example` only when the
+target repo needs local S3-compatible storage. The example intentionally splits
+the MinIO server and client images and uses an init service for idempotent
+bucket creation.
 
 ## Source Of Truth
 
-The canonical files live in the `508-devkit` repository. Do not recreate large snippets from memory when the repo is available locally.
+The canonical files live in the `508-devkit` repository. Do not recreate large
+snippets from memory when the repo is available locally or online.
+
+## Python uv Cooldowns
+
+Before writing uv dependency cooldowns, run `uv --no-config --version`.
+Relative `exclude-newer` values such as `P7D` and `7 days` require uv `0.9.17`
+or newer. If the target machine has an older uv, ask the user whether they want
+to upgrade uv. Do not write relative cooldowns into `pyproject.toml`, `uv.toml`,
+or `~/.config/uv/uv.toml` for old uv clients because every uv command can fail
+during settings discovery.

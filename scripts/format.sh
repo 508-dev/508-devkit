@@ -1,5 +1,7 @@
 #!/usr/bin/env sh
 set -eu
 
-uv run ruff format apps packages tests
+cd "$(dirname "$0")/.."
+
+# Formatting is explicit and separate from format:check/pre-commit.
 bun run format

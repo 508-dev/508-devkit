@@ -18,3 +18,11 @@ Add Sentry when the project has a real error reporting destination and release/e
 Add OpenTelemetry when the project has a collector, trace sampling policy, and service naming convention.
 
 Keep SDK initialization in one shared helper per runtime so API, worker, and job processes behave consistently.
+
+## Agent Notes
+
+- Do not add telemetry SDK dependencies just because the env vars exist.
+- Add Sentry, OTEL, metrics, or log shipping only after the target repo has a
+  destination and naming convention.
+- Keep one runtime-local initialization helper so services do not configure
+  observability differently by accident.

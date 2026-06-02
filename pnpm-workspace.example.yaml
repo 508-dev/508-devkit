@@ -1,7 +1,7 @@
-# Optional pnpm fallback for large JavaScript workspaces.
-# The default template uses Bun.
+# Optional pnpm setup for JavaScript workspaces that prefer pnpm.
+# The root TypeScript example shows Bun first, but pnpm is first-class too.
 packages:
-  - "apps/web"
+  - "stacks/typescript"
 
 # Seven days, in minutes. pnpm v10.16+ supports this setting here.
 minimumReleaseAge: 10080
