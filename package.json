@@ -14,7 +14,7 @@
     "format": "biome format --write .",
     "format:check": "biome format .",
     "typecheck": "bun run --cwd apps/web typecheck",
-    "test": "bun test",
+    "test": "bun run --cwd apps/web test",
     "check": "./scripts/check-all.sh",
     "ports": "python3 scripts/worktree-ports.py env",
     "db:generate": "bun run --cwd apps/web db:generate",

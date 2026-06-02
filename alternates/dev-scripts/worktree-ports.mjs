@@ -36,7 +36,7 @@ function envValues() {
   values.POSTGRES_URL = `postgresql://app:app@127.0.0.1:${values.POSTGRES_HOST_PORT}/app`;
   values.DATABASE_URL = values.POSTGRES_URL;
   values.REDIS_URL = `redis://127.0.0.1:${values.REDIS_HOST_PORT}/0`;
-  values.NEXT_PUBLIC_API_BASE_URL = `http://127.0.0.1:${values.API_PORT}`;
+  values.VITE_API_BASE_URL = `http://127.0.0.1:${values.API_PORT}`;
   return values;
 }
 

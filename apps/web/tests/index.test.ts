@@ -4,8 +4,6 @@ import { apiBaseUrl } from "../src";
 
 describe("apiBaseUrl", () => {
   it("uses the configured public API URL", () => {
-    expect(apiBaseUrl({ NEXT_PUBLIC_API_BASE_URL: "http://localhost:9999" })).toBe(
-      "http://localhost:9999",
-    );
+    expect(apiBaseUrl({ VITE_API_BASE_URL: "http://localhost:9999" })).toBe("http://localhost:9999");
   });
 });
