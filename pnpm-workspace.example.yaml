@@ -1,0 +1,10 @@
+# Optional pnpm fallback for large JavaScript workspaces.
+# The default template uses Bun.
+packages:
+  - "apps/web"
+
+# Seven days, in minutes. pnpm v10.16+ supports this setting here.
+minimumReleaseAge: 10080
+minimumReleaseAgeExclude:
+  - "@types/node"
+  - "typescript"
