@@ -19,10 +19,10 @@ Use pnpm only when a workspace grows large enough that its monorepo tooling, wor
 
 Required checks:
 
-- `pnpm lint`
-- `pnpm format:check`
-- `pnpm typecheck`
-- `pnpm test`
+- `bun run lint`
+- `bun run format:check`
+- `bun run typecheck`
+- `bun run test`
 
 ## Dependency Safety
 

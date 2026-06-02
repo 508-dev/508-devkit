@@ -21,7 +21,13 @@ def create_app() -> FastAPI:
 
 
 def main() -> None:
-    uvicorn.run("example_api.main:create_app", factory=True, host="0.0.0.0", port=8720)
+    settings = get_settings()
+    uvicorn.run(
+        "example_api.main:create_app",
+        factory=True,
+        host=settings.api_host,
+        port=settings.api_port,
+    )
 
 
 if __name__ == "__main__":

@@ -40,6 +40,7 @@ jobs:
             python:
               - "apps/api/**"
               - "packages/shared/**"
+              - "tests/**"
               - "pyproject.toml"
               - "uv.lock"
               - "scripts/*.sh"
@@ -81,10 +82,10 @@ jobs:
         run: uv sync --locked
 
       - name: Ruff
-        run: uv run ruff check apps packages
+        run: uv run ruff check apps packages tests
 
       - name: Ruff format
-        run: uv run ruff format --check apps packages
+        run: uv run ruff format --check apps packages tests
 
       - name: MyPy
         run: uv run mypy

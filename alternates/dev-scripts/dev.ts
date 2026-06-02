@@ -35,12 +35,7 @@ const api = run("api", "uv", [
   "--reload",
 ]);
 
-const web = run("web", "bun", [
-  "run",
-  "--cwd",
-  "apps/web",
-  "dev",
-]);
+const web = run("web", "bun", ["run", "--cwd", "apps/web", "dev"]);
 
 process.on("SIGINT", () => {
   api.kill("SIGTERM");

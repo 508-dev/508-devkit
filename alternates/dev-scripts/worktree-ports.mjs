@@ -27,12 +27,17 @@ function worktreeRoot() {
 
 function portBlock(root) {
   const digest = createHash("sha256").update(resolve(root)).digest("hex");
-  return BASE_PORT + ((Number.parseInt(digest.slice(0, 8), 16) % (SPAN / PORT_BLOCK_SIZE)) * PORT_BLOCK_SIZE);
+  return (
+    BASE_PORT +
+    (Number.parseInt(digest.slice(0, 8), 16) % (SPAN / PORT_BLOCK_SIZE)) * PORT_BLOCK_SIZE
+  );
 }
 
 function envValues() {
   const base = portBlock(worktreeRoot());
-  const values = Object.fromEntries(Object.entries(OFFSETS).map(([key, offset]) => [key, String(base + offset)]));
+  const values = Object.fromEntries(
+    Object.entries(OFFSETS).map(([key, offset]) => [key, String(base + offset)]),
+  );
   values.POSTGRES_URL = `postgresql://app:app@127.0.0.1:${values.POSTGRES_HOST_PORT}/app`;
   values.DATABASE_URL = values.POSTGRES_URL;
   values.REDIS_URL = `redis://127.0.0.1:${values.REDIS_HOST_PORT}/0`;

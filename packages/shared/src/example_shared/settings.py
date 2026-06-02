@@ -16,6 +16,8 @@ class Settings(BaseSettings):
     environment: str = "local"
     log_level: str = "INFO"
 
+    api_host: str = "127.0.0.1"
+    api_port: int = 8720
     api_shared_secret: SecretStr | None = None
 
     postgres_url: str = "postgresql://app:app@127.0.0.1:8740/app"
