@@ -20,6 +20,7 @@ Use this skill when creating or normalizing a 508.dev repository.
    - Worktree ports for local parallel worktrees.
    - `.worktreeinclude` for ignored local config copied into sibling worktrees.
    - `.dockerignore` for small, secret-safe Docker build contexts.
+   - GitHub PR and issue templates for lightweight collaboration hygiene.
    - Pydantic settings and Alembic for Python service data.
    - Drizzle for TypeScript service data.
    - Optional SOPS only when encrypted repo files are needed.
@@ -32,6 +33,12 @@ Use this skill when creating or normalizing a 508.dev repository.
 Keep `.worktreeinclude` as a short allowlist. Good examples are `.env`, `.env.local`, `.env.development.local`, and `.sops.yaml`. Do not include generated state such as `.venv`, `node_modules`, caches, local databases, screenshots, or logs.
 
 Keep `.dockerignore` broad enough to exclude `.git`, `.context`, local secrets, dependency directories, caches, logs, and build outputs. Preserve explicit exceptions for committed templates such as `.env.example`.
+
+## GitHub Files
+
+Use the root `.github/` templates as defaults for most repositories. Keep PR and issue templates short enough that they improve collaboration without adding process overhead.
+
+Keep CODEOWNERS, discussion templates, and TODO-to-issue automation opt-in. Copy them from `alternates/` only after replacing placeholder owners, confirming the support workflow, or accepting the workflow permissions.
 
 ## Source Of Truth
 

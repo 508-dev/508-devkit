@@ -18,6 +18,7 @@ Point an agent at this repo when starting or normalizing a project. The agent sh
 - Deterministic worktree ports.
 - `.worktreeinclude` for copying local-only env files into sibling worktrees.
 - `.dockerignore` for small, secret-safe Docker build contexts.
+- GitHub PR, issue, and CI hygiene.
 - Pydantic settings and schemas.
 - Alembic migrations for Python services.
 - Drizzle ORM for TypeScript services.
@@ -96,6 +97,8 @@ This repository intentionally includes files that conflict with each other. It i
 
 - `alternates/pnpm/`: pnpm root files and CI fragment.
 - `alternates/dev-scripts/`: JS-first script variants for repos that do not want Python helpers.
+- `alternates/github/`: CODEOWNERS and discussion templates that need project-specific owners or support policy.
+- `alternates/todo-to-issue/`: opt-in workflow for turning TODO comments into GitHub issues.
 - `.sops.yaml.example`: optional SOPS starter only for repos that need encrypted files.
 
 Keep root defaults for most new projects: Bun, `uv`, shell wrappers, Python worktree ports, and Compose-managed infra.
