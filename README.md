@@ -1,8 +1,10 @@
 # 508 Devkit
 
-AI-first repository template for 508.dev projects.
+Opinionated sane defaults and conventions for 508.dev projects.
 
-This is not a scaffolding CLI. Modern coding agents can create project-specific files on demand. This repository captures the conventions, tooling, and workflows that should be common across new projects.
+This is not a scaffolding CLI. It is a reference repo that gives agents and humans a shared baseline for how new projects should be shaped: repository layout, local development, dependency safety, CI, agent instructions, operational memory, and documentation.
+
+Point an agent at this repo when starting or normalizing a project. The agent should inspect the target repo, ask clarifying questions when the product or stack is ambiguous, and then copy or adapt only the conventions that fit.
 
 ## What It Captures
 
@@ -22,7 +24,31 @@ This is not a scaffolding CLI. Modern coding agents can create project-specific 
 - Ruff, MyPy, Pytest, Biome, and Vitest.
 - Optional SOPS documentation without forcing SOPS into every repo.
 
-## Main Commands
+## Quickstart
+
+Use the repo directly:
+
+```text
+Use /path/to/508-devkit as the project bootstrap reference.
+Inspect my target repo, ask any necessary questions, then apply the relevant conventions.
+```
+
+Or install/use the bundled agent skill:
+
+```text
+Install the skill from skills/508-devkit/SKILL.md.
+Run it as /508-devkit, /bootstrap-project, or whatever command name your agent client assigns.
+```
+
+Expected agent behavior:
+
+- Inspect the target repo before editing.
+- Ask about product shape, deployment target, data stores, and language/runtime choices when those are unclear.
+- Automatically pick up existing conventions when the repo already has them.
+- Prefer the devkit defaults for new projects unless there is a clear reason to choose an alternate.
+- Run the narrowest relevant checks before calling the bootstrap complete.
+
+For this repo itself:
 
 ```bash
 uv sync
@@ -43,7 +69,7 @@ docs            Durable project documentation
 .context        Operational memory
 ```
 
-## Start Here
+## Read Next
 
 1. Read `docs/pattern-report.md`.
 2. Read `docs/template-proposal.md`.
