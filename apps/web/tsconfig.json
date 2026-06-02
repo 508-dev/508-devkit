@@ -8,7 +8,7 @@
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": true,
     "jsx": "react-jsx",
-    "types": ["bun", "vite/client", "vitest/globals"]
+    "types": ["bun", "vitest/globals"]
   },
-  "include": ["src", "tests", "drizzle.config.ts", "vite.config.ts"]
+  "include": ["src", "tests", "drizzle.config.ts", "vitest.config.ts"]
 }

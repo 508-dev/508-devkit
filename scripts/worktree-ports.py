@@ -152,7 +152,7 @@ def env_values() -> dict[str, str]:
             "DATABASE_URL": f"postgresql://app:app@127.0.0.1:{postgres}/app",
             "REDIS_URL": f"redis://127.0.0.1:{redis}/0",
             "MINIO_ENDPOINT": f"http://127.0.0.1:{minio}",
-            "VITE_API_BASE_URL": f"http://127.0.0.1:{api}",
+            "WEB_API_BASE_URL": f"http://127.0.0.1:{api}",
             "OTEL_EXPORTER_OTLP_ENDPOINT": f"http://127.0.0.1:{values['OTEL_HTTP_PORT']}",
         }
     )

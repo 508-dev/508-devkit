@@ -16,6 +16,7 @@ Use this skill when creating or normalizing a 508.dev repository.
    - Bun default for new JS projects.
    - pnpm alternate for large JS workspaces.
    - Python `uv` workspace when backend, worker, or scripts exist.
+   - Framework-neutral web conventions unless the target repo already chose a frontend framework.
    - Docker Compose for Postgres/Redis infra.
    - Worktree ports for local parallel worktrees.
    - `.worktreeinclude` for ignored local config copied into sibling worktrees.
@@ -33,6 +34,12 @@ Use this skill when creating or normalizing a 508.dev repository.
 Keep `.worktreeinclude` as a short allowlist. Good examples are `.env`, `.env.local`, `.env.development.local`, and `.sops.yaml`. Do not include generated state such as `.venv`, `node_modules`, caches, local databases, screenshots, or logs.
 
 Keep `.dockerignore` broad enough to exclude `.git`, `.context`, local secrets, dependency directories, caches, logs, and build outputs. Preserve explicit exceptions for committed templates such as `.env.example`.
+
+## Frontend Frameworks
+
+Do not infer a frontend framework from this devkit. Root `apps/web` is a TypeScript convention workspace, not a finished Vite, Next.js, or TanStack app.
+
+When applying the devkit, inspect the target repo and ask when needed. Choose a framework only when the product shape and deployment target make it clear. Map neutral env names such as `WEB_API_BASE_URL` into framework-specific public env names after that choice.
 
 ## GitHub Files
 

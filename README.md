@@ -16,6 +16,7 @@ Point an agent at this repo when starting or normalizing a project. The agent sh
 - Host-run development services.
 - Docker Compose for Postgres, Redis, and optional MinIO.
 - Deterministic worktree ports.
+- Framework-neutral frontend conventions.
 - `.worktreeinclude` for copying local-only env files into sibling worktrees.
 - `.dockerignore` for small, secret-safe Docker build contexts.
 - GitHub PR, issue, and CI hygiene.
@@ -62,7 +63,7 @@ bun install --frozen-lockfile
 
 ```text
 apps/api        Python HTTP API, Pydantic settings, SQLAlchemy/Alembic
-apps/web        Bun TypeScript app, Drizzle, Biome, Vitest
+apps/web        Framework-neutral TypeScript workspace, Drizzle, Biome, Vitest
 apps/worker     Python background worker
 packages/shared Shared Python contracts and helpers
 scripts         Stable human/agent entrypoints
@@ -74,10 +75,11 @@ docs            Durable project documentation
 
 1. Read `docs/pattern-report.md`.
 2. Read `docs/template-proposal.md`.
-3. Copy `.env.example` to `.env`.
-4. Run `./scripts/worktree-ports.py env`.
-5. Run `./scripts/docker-compose.sh up -d postgres redis`.
-6. Run `./scripts/dev.sh`.
+3. Read `docs/frontend.md`.
+4. Copy `.env.example` to `.env`.
+5. Run `./scripts/worktree-ports.py env`.
+6. Run `./scripts/docker-compose.sh up -d postgres redis`.
+7. Run `./scripts/dev.sh`.
 
 ## Worktree And Docker Hygiene
 

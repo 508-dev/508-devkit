@@ -40,10 +40,6 @@ const web = run("web", "bun", [
   "--cwd",
   "apps/web",
   "dev",
-  "--host",
-  env.WEB_HOST ?? "127.0.0.1",
-  "--port",
-  env.WEB_PORT ?? "8730",
 ]);
 
 process.on("SIGINT", () => {

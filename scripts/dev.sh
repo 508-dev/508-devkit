@@ -10,7 +10,7 @@ export PYTHONPATH="${PYTHONPATH:-apps/api/src:apps/worker/src:packages/shared/sr
 
 echo "508 Devkit local stack"
 echo "  API: http://${API_HOST}:${API_PORT}"
-echo "  Web: http://${WEB_HOST}:${WEB_PORT}"
+echo "  Web: framework-neutral TypeScript watcher; reserve WEB_PORT=${WEB_PORT} for your chosen web framework"
 echo "  Postgres: 127.0.0.1:${POSTGRES_HOST_PORT}"
 echo "  Redis: 127.0.0.1:${REDIS_HOST_PORT}"
 echo
@@ -36,7 +36,7 @@ API_PID=$!
 uv run --package example-worker worker-consumer &
 WORKER_PID=$!
 
-bun run --cwd apps/web dev --host "$WEB_HOST" --port "$WEB_PORT" &
+bun run --cwd apps/web dev &
 WEB_PID=$!
 
 wait "$API_PID" "$WORKER_PID" "$WEB_PID"
