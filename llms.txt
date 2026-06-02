@@ -1,0 +1,31 @@
+# 508 Devkit
+
+508 Devkit is an opinionated reference repo of sane defaults and conventions for 508.dev projects.
+
+## Start Here
+
+- `README.md`: overview and quickstart.
+- `AGENTS.md`: agent operating instructions.
+- `docs/pattern-report.md`: source patterns behind the scaffold.
+- `docs/template-proposal.md`: design rationale for included files.
+- `docs/frontend.md`: framework-neutral frontend policy.
+- `docs/github-workflows.md`: GitHub templates and workflow guidance.
+- `docs/supply-chain.md`: dependency safety policy.
+
+## Key Conventions
+
+- Use `uv` for Python workspaces.
+- Use Bun for JavaScript package management unless the target repo needs pnpm.
+- Keep frontend framework choice out of root defaults.
+- Run app services on the host and infrastructure in Docker Compose.
+- Use deterministic worktree ports from `scripts/worktree-ports.py`.
+- Keep `.context/` for operational memory, not user-facing docs.
+- Put opt-in or team-specific choices in `alternates/`.
+
+## Validation
+
+Use:
+
+```bash
+./scripts/check-all.sh
+```

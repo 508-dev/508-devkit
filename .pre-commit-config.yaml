@@ -1,0 +1,22 @@
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.14.0
+    hooks:
+      - id: ruff
+        args: [--fix]
+      - id: ruff-format
+
+  - repo: local
+    hooks:
+      - id: mypy
+        name: mypy
+        entry: ./scripts/typecheck.sh
+        language: system
+        pass_filenames: false
+        files: ^(apps/api/src|apps/worker/src|packages/shared/src)/
+      - id: biome
+        name: biome
+        entry: bun run format:check
+        language: system
+        pass_filenames: false
+        files: ^(apps/web/|packages/|scripts/|biome\.json$|package\.json$)
