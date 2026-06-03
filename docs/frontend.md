@@ -6,13 +6,14 @@ Next.js, Vite, TanStack Start, Astro, Expo, and other frameworks are all reasona
 
 ## Root Convention
 
-The root `apps/web` package is a framework-neutral TypeScript workspace. It exists to capture shared JavaScript conventions:
+The `stacks/typescript` package is a framework-neutral TypeScript workspace. It exists to capture shared JavaScript conventions:
 
 - Bun package scripts.
 - TypeScript typechecking.
 - Biome formatting and linting.
 - Vitest unit tests.
-- Drizzle placeholder config for TypeScript-side database access when needed.
+- Drizzle placeholder config as one TypeScript-side database access example
+  when needed.
 
 It is not meant to be copied as a finished web application.
 
@@ -39,3 +40,7 @@ When bootstrapping a target repo, agents should ask or infer:
 - Which frontend conventions already exist in the target repo?
 
 If the answer is unclear, leave the frontend framework unselected and document the decision needed.
+
+When adding a frontend later, update the public environment variable mapping,
+CI job names, and development docs together so agents do not mix framework
+conventions.

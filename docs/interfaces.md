@@ -31,3 +31,11 @@ Keep both:
 - `508-devkit` skill: lightweight instructions that point at this repo and describe how to choose files.
 
 The skill should not duplicate every template file. It should reference this repository and teach the agent how to apply it.
+
+## Agent Notes
+
+- Update the repository files first; the skill should summarize how to apply
+  them, not fork their content.
+- When a convention changes, update both the tracked docs and
+  `skills/508-devkit/SKILL.md` so agents do not apply stale behavior.
+- Keep examples short enough that humans can review the policy in a PR.

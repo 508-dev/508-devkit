@@ -5,7 +5,8 @@ The canonical agent instructions are in `AGENTS.md`.
 Follow the same repo rules as Codex:
 
 - Read before editing.
-- Prefer `uv run`, `bun run`, and scripts in `scripts/`.
+- Prefer repo-provided scripts. Use `bun run` for root tooling and `uv run` when a Python workspace is present.
 - Keep changes scoped.
 - Update `.env.example`, tests, and docs when contracts change.
-- Use `.context/` for concise operational memory.
+- Use gitignored `.context/` for concise workspace-local operational memory.
+  Promote durable knowledge into tracked docs instead of committing `.context/`.

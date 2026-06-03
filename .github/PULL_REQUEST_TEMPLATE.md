@@ -1,6 +1,6 @@
 ## Summary
 
--
+- <!-- What changed and why. Replace this line. -->
 
 ## Validation
 

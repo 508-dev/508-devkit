@@ -36,3 +36,12 @@ Before enabling automatic production deploys:
 3. Confirm rollback behavior.
 4. Keep preview deploys separate from production deploys.
 5. Use least-privilege deployment credentials.
+
+## Agent Notes
+
+- Do not infer a deployment platform from this devkit. Inspect the target repo,
+  hosting account, and team preference first.
+- Keep deployment workflows out of new repos until secrets and rollback are
+  known.
+- If deployment is undecided, leave the decision record blank rather than
+  copying placeholder platform files.

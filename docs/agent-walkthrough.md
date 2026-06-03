@@ -30,12 +30,20 @@ Inspect my target repo, ask any necessary questions, then apply the relevant con
 
 ## Example Decisions
 
-If the target repo has no frontend framework, copy the framework-neutral `apps/web` conventions but do not scaffold Next.js, Vite, or TanStack Start.
+If the target repo has no frontend framework, copy the framework-neutral `stacks/typescript` conventions but do not scaffold Next.js, Vite, or TanStack Start.
 
-If the target repo already uses pnpm, use `alternates/pnpm/` instead of forcing Bun.
+If the target repo already uses pnpm, use `stacks/typescript/pnpm/` instead of forcing Bun.
 
 If the target repo has a deployment platform, update `docs/deployment.md`. If not, leave a decision record placeholder.
 
-If the target repo is public or support-heavy, consider `alternates/github/community/`. Otherwise keep discussion templates out.
+If the target repo is public or support-heavy, consider `extras/github/community/`. Otherwise keep discussion templates out.
 
 If the target repo has no real GitHub teams yet, do not enable active CODEOWNERS.
+
+If maintainers ask for secret scanning, prefer GitHub native secret scanning
+and push protection when available. Add the Gitleaks extra only when CI scanning
+is explicitly desired.
+
+If maintainers ask for dependency visibility, explain that Dependency Review is
+dependency graph-based reporting. Add the extra only after confirming the graph
+is enabled and the repo wants that reporting.
