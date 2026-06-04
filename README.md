@@ -15,7 +15,8 @@ Point an agent at this repo when starting or normalizing a project. The agent sh
 - Bun and pnpm as first-class JavaScript package manager examples, with Bun
   shown first.
 - Optional `uv` Python workspace conventions.
-- Dependency cooldowns for Bun, pnpm, and uv.
+- Optional Ruby/Rails/Rack conventions.
+- Dependency cooldowns for Bun, pnpm, uv, and Bundler.
 - Host-run development services.
 - Docker Compose examples for local infrastructure such as databases and
   caches.
@@ -117,6 +118,8 @@ This repository intentionally includes files that conflict with each other. It i
 - `stacks/typescript/`: framework-neutral TypeScript conventions, Drizzle
   examples, Biome, Vitest.
 - `stacks/python/`: optional Python API/shared-package workspace.
+- `stacks/ruby/`: optional Ruby/Rails/Rack conventions with Bundler cooldown
+  guidance.
 - `stacks/typescript/pnpm/`: pnpm root files and CI fragment for larger TypeScript workspaces.
 - `extras/dev-scripts/`: JS-first script variants and JS implementations of helper scripts.
 - `extras/dockerfiles/`: opt-in Dockerfile examples for deployment parity.
@@ -135,7 +138,8 @@ Keep root defaults for most new projects: shell wrappers, shell worktree ports, 
 - Start with root hygiene files, then select only the stacks and extras that
   match the target repo.
 - Treat `stacks/` as peer language/runtime convention packs. TypeScript and
-  Python are examples, not universal defaults.
+  Python are examples, not universal defaults. Ruby is available as an
+  opt-in convention pack when the target repo actually uses Ruby.
 - Treat `extras/` as opt-in workflows or deployment helpers that may require
   repo settings, real owners, or team process.
 - Keep `.context/` gitignored. Promote durable learnings into tracked docs

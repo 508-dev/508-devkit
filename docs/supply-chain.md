@@ -73,6 +73,41 @@ minimumReleaseAgeExclude:
 
 `minimumReleaseAge` is in minutes.
 
+## Ruby and Bundler
+
+Use this when a project selects the Ruby stack or otherwise has a `Gemfile`.
+
+Bundler cooldowns require Bundler `4.0.13` or newer. Before adding cooldown to
+a downstream repo, check:
+
+```bash
+bundle --version
+```
+
+If Bundler is older than `4.0.13`, update Bundler and pin the same version in
+`Gemfile.lock` so local development and CI resolve dependencies with the same
+client behavior:
+
+```bash
+gem install bundler -v 4.0.13
+bundle update --bundler=4.0.13
+```
+
+Then prefer a committed per-source cooldown in `Gemfile`:
+
+```ruby
+source "https://rubygems.org", cooldown: 7
+```
+
+This policy is intentionally committed with the dependency source instead of
+living only in a developer's local Bundler config. It gives fresh public gem
+releases time to be vetted while keeping private or internal gem sources free to
+declare their own policy.
+
+Use `cooldown: 0`, `bundle install --cooldown 0`, or `BUNDLE_COOLDOWN=0` only
+for intentional exceptions such as emergency security fixes. Document the
+exception in the PR or release note.
+
 ## CI
 
 Use frozen or locked installs:
@@ -81,6 +116,7 @@ Use frozen or locked installs:
 bun install --frozen-lockfile
 uv sync --locked
 pnpm install --frozen-lockfile
+BUNDLE_DEPLOYMENT=true BUNDLE_FROZEN=true bundle install
 ```
 
 Renovate should use `minimumReleaseAge = "7 days"` so dependency PRs do not fight package-manager cooldowns.

@@ -40,6 +40,31 @@ Keep Python configuration in `pyproject.toml`. The Python stack shows Pydantic
 settings/boundary schemas and Alembic migrations as examples; keep them when
 they fit the target repo and replace them when an existing choice is better.
 
+## Ruby Stack
+
+Use Bundler for Ruby installs and command execution when the target project
+selects `stacks/ruby`.
+
+The Ruby stack is intentionally a convention pack rather than a generated app.
+Copy its `Gemfile.example` to `Gemfile`, generate a project-specific
+`Gemfile.lock` with a compatible Bundler, and add Rails, Rack, Sidekiq, or other
+runtime gems only when the target repo needs them.
+
+Required checks for a typical Ruby project:
+
+```bash
+bundle check
+bundle exec rubocop
+bundle exec rspec
+```
+
+Use Rails or Rack conventions when the target repo already has them. The Ruby
+stack intentionally does not make Rails a root default; it provides scripts that
+adapt to `bin/dev`, Rails, Rack, RSpec, or Minitest-style test directories.
+
+When adding Bundler cooldowns, require Bundler `4.0.13` or newer and pin that
+Bundler version in `Gemfile.lock` before handing off the target repo.
+
 ## Dependency Safety
 
 Use dependency cooldowns and frozen installs:
@@ -49,6 +74,9 @@ Use dependency cooldowns and frozen installs:
   must check `uv --no-config --version` before writing relative cooldowns
   downstream and ask before upgrading old uv installations.
 - pnpm: `pnpm-workspace.yaml` should set `minimumReleaseAge: 10080` minutes.
+- Bundler: `Gemfile` should use
+  `source "https://rubygems.org", cooldown: 7` when Bundler is `4.0.13` or
+  newer.
 - CI should use locked or frozen installs.
 
 Regenerate lockfiles when cooldown settings change so CI validates committed

@@ -15,8 +15,8 @@ Canonical repo: https://github.com/508-dev/508-devkit
 - Root files provide broadly useful hygiene: agent instructions, shell
   entrypoints, worktree-safe ports, Docker Compose examples, GitHub templates,
   dependency cooldowns, and docs.
-- `stacks/` contains language/runtime convention packs. TypeScript and Python
-  are examples, not universal defaults.
+- `stacks/` contains language/runtime convention packs. TypeScript, Python, and
+  Ruby are examples, not universal defaults.
 - `extras/` contains opt-in add-ons such as Dockerfiles, dev containers,
   object storage, CODEOWNERS, Gitleaks, Dependency Review, and TODO-to-issue.
 - `.context/` is workspace-local agent scratch and must not be committed.
@@ -27,6 +27,8 @@ Canonical repo: https://github.com/508-dev/508-devkit
    - `DECISIONS.md` when present.
    - `AGENTS.md`, `CLAUDE.md`, Cursor rules.
    - `pyproject.toml`, `uv.lock` when Python is present.
+   - `Gemfile`, `Gemfile.lock`, `.ruby-version`, `gems.rb`, and `gems.locked`
+     when Ruby is present.
    - `package.json`, `bun.lock`, `pnpm-lock.yaml`, `bunfig.toml`, `pnpm-workspace.yaml`.
    - Compose files.
    - `.github/workflows`.
@@ -44,6 +46,9 @@ Canonical repo: https://github.com/508-dev/508-devkit
    - Use the Python stack only when the target repo is Python or the user asks
      for Python conventions. Treat Pydantic settings and Alembic migrations as
      examples, not requirements.
+   - Use the Ruby stack only when the target repo is Ruby or the user asks for
+     Ruby conventions. Treat Rails and Rack paths as adaptive examples, not
+     requirements.
    - Use Drizzle examples only when TypeScript-side database access is wanted
      and Drizzle fits the repo. Keep an existing data-access layer when one is
      already established.
@@ -88,6 +93,10 @@ When selecting the Python stack and copying its `scripts/dev.sh`, also copy
 `stacks/python/scripts/worktree-ports.py` or adapt the script to the root shell
 port helper.
 
+When selecting the Ruby stack, keep the root shell `scripts/worktree-ports.sh`
+as the canonical port helper unless the target repo has a specific reason to
+standardize scripts in Ruby.
+
 ## Frontend Frameworks
 
 Do not infer a frontend framework from this devkit. `stacks/typescript` is a TypeScript convention workspace, not a finished Vite, Next.js, or TanStack app.
@@ -124,3 +133,11 @@ or newer. If the target machine has an older uv, ask the user whether they want
 to upgrade uv. Do not write relative cooldowns into `pyproject.toml`, `uv.toml`,
 or `~/.config/uv/uv.toml` for old uv clients because every uv command can fail
 during settings discovery.
+
+## Ruby Bundler Cooldowns
+
+Before writing Bundler dependency cooldowns, run `bundle --version`.
+`source "https://rubygems.org", cooldown: 7` requires Bundler `4.0.13` or
+newer. If the target machine has an older Bundler, ask before upgrading it. Once
+cooldown is added, pin the compatible Bundler version in `Gemfile.lock` with
+`bundle update --bundler=4.0.13` or newer.
