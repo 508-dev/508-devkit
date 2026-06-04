@@ -18,6 +18,7 @@ Copy the relevant files into the target repo root:
 
 ```bash
 cp stacks/ruby/Gemfile.example Gemfile
+cp scripts/worktree-ports.sh scripts/
 cp stacks/ruby/scripts/*.sh scripts/
 ```
 
@@ -54,5 +55,7 @@ Then validate the copied stack:
 - Commit `Gemfile.lock` after applying the stack to a real target repo.
 - Keep root port helpers shell-based unless the target repo intentionally wants
   Ruby helper scripts.
+- If the target repo already has its own port helper, adapt `scripts/dev.sh`
+  instead of overwriting that helper.
 - Update `.env.example` whenever settings fields change.
 - Run `./scripts/check-all.sh` from the copied Ruby stack before handing off.

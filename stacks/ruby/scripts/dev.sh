@@ -3,16 +3,25 @@ set -eu
 
 cd "$(dirname "$0")/.."
 
-eval "$(./scripts/worktree-ports.sh export)"
 export WEB_HOST="${WEB_HOST:-127.0.0.1}"
-export PORT="${PORT:-$WEB_PORT}"
 export RACK_ENV="${RACK_ENV:-development}"
 export RAILS_ENV="${RAILS_ENV:-development}"
 
+if [ -x ./scripts/worktree-ports.sh ]; then
+  eval "$(./scripts/worktree-ports.sh export)"
+  export PORT="${PORT:-$WEB_PORT}"
+else
+  export PORT="${PORT:-${CONDUCTOR_PORT:-3000}}"
+fi
+
 echo "508 Devkit Ruby stack"
 echo "  Web: http://${WEB_HOST}:${PORT}"
-echo "  Postgres: 127.0.0.1:${POSTGRES_HOST_PORT}"
-echo "  Redis: 127.0.0.1:${REDIS_HOST_PORT}"
+if [ -n "${POSTGRES_HOST_PORT:-}" ]; then
+  echo "  Postgres: 127.0.0.1:${POSTGRES_HOST_PORT}"
+fi
+if [ -n "${REDIS_HOST_PORT:-}" ]; then
+  echo "  Redis: 127.0.0.1:${REDIS_HOST_PORT}"
+fi
 echo
 
 if [ -x bin/dev ]; then

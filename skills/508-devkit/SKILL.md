@@ -93,9 +93,10 @@ When selecting the Python stack and copying its `scripts/dev.sh`, also copy
 `stacks/python/scripts/worktree-ports.py` or adapt the script to the root shell
 port helper.
 
-When selecting the Ruby stack, keep the root shell `scripts/worktree-ports.sh`
-as the canonical port helper unless the target repo has a specific reason to
-standardize scripts in Ruby.
+When selecting the Ruby stack and copying its `scripts/dev.sh`, also copy the
+root `scripts/worktree-ports.sh` helper or adapt the script to the target repo's
+existing port strategy. Keep the root shell helper as the canonical port helper
+unless the target repo has a specific reason to standardize scripts in Ruby.
 
 ## Frontend Frameworks
 
