@@ -96,7 +96,10 @@ port helper.
 When selecting the Ruby stack and copying its `scripts/dev.sh`, also copy the
 root `scripts/worktree-ports.sh` helper or adapt the script to the target repo's
 existing port strategy. Keep the root shell helper as the canonical port helper
-unless the target repo has a specific reason to standardize scripts in Ruby.
+unless the target repo has a specific reason to standardize scripts in Ruby. If
+an ADE exposes a product-specific port variable, map it to `PORT`,
+`WORKTREE_PRIMARY_PORT`, or `WORKTREE_PORT_BLOCK_START` in that ADE's wrapper
+instead of adding the product-specific name to reusable stack scripts.
 
 ## Frontend Frameworks
 

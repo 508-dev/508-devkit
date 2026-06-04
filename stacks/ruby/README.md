@@ -11,6 +11,9 @@ service tooling.
 
 The root devkit keeps `scripts/worktree-ports.sh` as the canonical port helper
 so projects are not forced to include Ruby just for port allocation.
+If an ADE or workspace orchestrator has its own reserved port variable, map it
+to `PORT` or `WORKTREE_PRIMARY_PORT` in that environment's wrapper script
+instead of adding ADE-specific names to this stack.
 
 ## Apply
 
@@ -57,5 +60,7 @@ Then validate the copied stack:
   Ruby helper scripts.
 - If the target repo already has its own port helper, adapt `scripts/dev.sh`
   instead of overwriting that helper.
+- If the target ADE exposes a product-specific port variable, map it to `PORT`
+  or `WORKTREE_PRIMARY_PORT` outside the reusable stack scripts.
 - Update `.env.example` whenever settings fields change.
 - Run `./scripts/check-all.sh` from the copied Ruby stack before handing off.

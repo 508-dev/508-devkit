@@ -11,7 +11,7 @@ if [ -x ./scripts/worktree-ports.sh ]; then
   eval "$(./scripts/worktree-ports.sh export)"
   export PORT="${PORT:-$WEB_PORT}"
 else
-  export PORT="${PORT:-${CONDUCTOR_PORT:-3000}}"
+  export PORT="${PORT:-${WORKTREE_PRIMARY_PORT:-3000}}"
 fi
 
 echo "508 Devkit Ruby stack"
