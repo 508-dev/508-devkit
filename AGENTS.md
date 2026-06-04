@@ -13,10 +13,13 @@
 - uv: add optional `exclude-newer = "P7D"` only after confirming the local
   `uv` version supports relative `exclude-newer` durations.
 - pnpm: keep `minimumReleaseAge: 10080` in `pnpm-workspace.yaml`.
+- Bundler: use `source "https://rubygems.org", cooldown: 7` only with Bundler
+  `4.0.13` or newer, then pin that Bundler version in `Gemfile.lock`.
 - CI should use locked installs:
   - `bun install --frozen-lockfile`
   - `uv sync --locked` when a Python workspace is present
   - `pnpm install --frozen-lockfile` when pnpm is used.
+  - `bundle install` with deployment/frozen settings when Ruby is used.
 - Commit lockfiles.
 
 ## Repository Shape
@@ -25,6 +28,7 @@
 - `scripts`: stable project entrypoints.
 - `docs`: contributor-facing documentation.
 - `stacks/python`: optional Python API/shared-package workspace.
+- `stacks/ruby`: optional Ruby/Rails/Rack workspace conventions.
 - `.context`: gitignored workspace-local scratch for Conductor and agents.
 
 ## Development Workflow
@@ -55,6 +59,10 @@
   target machine is older, ask before upgrading uv; do not write `P7D` or
   `7 days` into `pyproject.toml` or `uv.toml` because older uv clients fail
   during settings discovery.
+- Before adding Bundler cooldown config, run `bundle --version`. The
+  `cooldown:` source option requires Bundler `4.0.13` or newer. If Bundler is
+  older, ask before upgrading it; do not add cooldown syntax that the target
+  repo's Bundler cannot parse.
 - The TypeScript stack includes Drizzle examples for database access. Keep
   Drizzle when it fits; replace it when the target repo already uses another
   data-access layer.
