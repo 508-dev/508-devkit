@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import importlib.util
+import subprocess
+import sys
 from pathlib import Path
 
 
@@ -40,6 +42,28 @@ def test_env_values_print_web_url_first() -> None:
 
     assert list(values)[:3] == ["WEB_URL", "WEB_PORT", "API_PORT"]
     assert values["WEB_URL"] == "http://127.0.0.1:9000"
+
+
+def test_exec_direct_web_port_override_refreshes_web_url() -> None:
+    script = Path(__file__).resolve().parents[1] / "scripts" / "worktree-ports.py"
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(script),
+            "exec",
+            "WEB_PORT=9999",
+            "--",
+            sys.executable,
+            "-c",
+            "import os; print(os.environ['WEB_PORT']); print(os.environ['WEB_URL'])",
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.stdout.splitlines() == ["9999", "http://127.0.0.1:9999"]
 
 
 def test_reserved_block_uses_compact_offsets() -> None:

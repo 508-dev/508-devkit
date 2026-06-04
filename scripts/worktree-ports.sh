@@ -244,6 +244,41 @@ export_env() {
   export WEB_URL WEB_API_BASE_URL OTEL_EXPORTER_OTLP_ENDPOINT
 }
 
+has_override() {
+  key="$1"
+  while IFS= read -r assignment; do
+    case "$assignment" in
+      "$key="*) return 0 ;;
+    esac
+  done <<EOF
+$overrides
+EOF
+  return 1
+}
+
+refresh_derived_env_after_overrides() {
+  if ! has_override POSTGRES_URL; then
+    POSTGRES_URL="postgresql://app:app@127.0.0.1:${POSTGRES_HOST_PORT}/app"
+  fi
+  if ! has_override DATABASE_URL; then
+    DATABASE_URL="$POSTGRES_URL"
+  fi
+  if ! has_override REDIS_URL; then
+    REDIS_URL="redis://127.0.0.1:${REDIS_HOST_PORT}/0"
+  fi
+  if ! has_override WEB_URL; then
+    WEB_URL="http://127.0.0.1:${WEB_PORT}"
+  fi
+  if ! has_override WEB_API_BASE_URL; then
+    WEB_API_BASE_URL="http://127.0.0.1:${API_PORT}"
+  fi
+  if ! has_override OTEL_EXPORTER_OTLP_ENDPOINT; then
+    OTEL_EXPORTER_OTLP_ENDPOINT="http://127.0.0.1:${OTEL_HTTP_PORT}"
+  fi
+  export POSTGRES_URL DATABASE_URL REDIS_URL
+  export WEB_URL WEB_API_BASE_URL OTEL_EXPORTER_OTLP_ENDPOINT
+}
+
 run_with_env() {
   if [ "$#" -eq 0 ]; then
     usage
@@ -285,6 +320,8 @@ $1"
   done <<EOF
 $overrides
 EOF
+
+  refresh_derived_env_after_overrides
 
   exec "$@"
 }

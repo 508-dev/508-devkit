@@ -226,28 +226,45 @@ def ports_for_environment(env: dict[str, str], root: Path | None = None) -> dict
 def env_values(env: dict[str, str] | None = None) -> dict[str, str]:
     """Return shell-friendly strings consumed by Compose and dev scripts."""
     values = ports_for_environment(env or os.environ)
-    postgres = values["POSTGRES_HOST_PORT"]
-    redis = values["REDIS_HOST_PORT"]
-    web = values["WEB_PORT"]
-    api = values["API_PORT"]
-    result = {
+    result = {name: str(port) for name, port in values.items()}
+    result.update(derived_env_values(result))
+    return ordered_env_values(result)
+
+
+def derived_env_values(env: dict[str, str]) -> dict[str, str]:
+    """Return URL values derived from the final port environment."""
+    web = env["WEB_PORT"]
+    api = env["API_PORT"]
+    postgres = env["POSTGRES_HOST_PORT"]
+    redis = env["REDIS_HOST_PORT"]
+    otel = env["OTEL_HTTP_PORT"]
+    postgres_url = f"postgresql://app:app@127.0.0.1:{postgres}/app"
+    return {
         "WEB_URL": f"http://127.0.0.1:{web}",
-        "WEB_PORT": str(values["WEB_PORT"]),
-        "API_PORT": str(values["API_PORT"]),
-        "WORKER_HEALTH_PORT": str(values["WORKER_HEALTH_PORT"]),
-        "POSTGRES_HOST_PORT": str(values["POSTGRES_HOST_PORT"]),
-        "REDIS_HOST_PORT": str(values["REDIS_HOST_PORT"]),
-        "OTEL_HTTP_PORT": str(values["OTEL_HTTP_PORT"]),
+        "POSTGRES_URL": postgres_url,
+        "DATABASE_URL": postgres_url,
+        "REDIS_URL": f"redis://127.0.0.1:{redis}/0",
+        "WEB_API_BASE_URL": f"http://127.0.0.1:{api}",
+        "OTEL_EXPORTER_OTLP_ENDPOINT": f"http://127.0.0.1:{otel}",
     }
-    result.update(
-        {
-            "POSTGRES_URL": f"postgresql://app:app@127.0.0.1:{postgres}/app",
-            "DATABASE_URL": f"postgresql://app:app@127.0.0.1:{postgres}/app",
-            "REDIS_URL": f"redis://127.0.0.1:{redis}/0",
-            "WEB_API_BASE_URL": f"http://127.0.0.1:{api}",
-            "OTEL_EXPORTER_OTLP_ENDPOINT": f"http://127.0.0.1:{values['OTEL_HTTP_PORT']}",
-        }
-    )
+
+
+def ordered_env_values(env: dict[str, str]) -> dict[str, str]:
+    """Keep WEB_URL first for URL scanners while preserving shell-friendly keys."""
+    result = {
+        "WEB_URL": env["WEB_URL"],
+        "WEB_PORT": env["WEB_PORT"],
+        "API_PORT": env["API_PORT"],
+        "WORKER_HEALTH_PORT": env["WORKER_HEALTH_PORT"],
+        "POSTGRES_HOST_PORT": env["POSTGRES_HOST_PORT"],
+        "REDIS_HOST_PORT": env["REDIS_HOST_PORT"],
+        "OTEL_HTTP_PORT": env["OTEL_HTTP_PORT"],
+        "POSTGRES_URL": env["POSTGRES_URL"],
+        "DATABASE_URL": env["DATABASE_URL"],
+        "REDIS_URL": env["REDIS_URL"],
+        "WEB_API_BASE_URL": env["WEB_API_BASE_URL"],
+        "OTEL_EXPORTER_OTLP_ENDPOINT": env["OTEL_EXPORTER_OTLP_ENDPOINT"],
+    }
     return result
 
 
@@ -288,6 +305,9 @@ def run_with_env(args: list[str]) -> int:
     env.update(overrides)
     env.update(env_values(env))
     env.update(overrides)
+    for key, value in derived_env_values(env).items():
+        if key not in overrides:
+            env[key] = value
 
     return subprocess.run(command, env=env, check=False).returncode
 
