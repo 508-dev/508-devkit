@@ -20,6 +20,7 @@ instead of adding ADE-specific names to this stack.
 Copy the relevant files into the target repo root:
 
 ```bash
+mkdir -p scripts
 cp stacks/ruby/Gemfile.example Gemfile
 cp scripts/worktree-ports.sh scripts/
 cp stacks/ruby/scripts/*.sh scripts/
