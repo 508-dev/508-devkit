@@ -90,7 +90,7 @@ client behavior:
 
 ```bash
 gem install bundler -v 4.0.13
-bundle update --bundler=4.0.13
+bundle lock --bundler=4.0.13
 ```
 
 Then prefer a committed per-source cooldown in `Gemfile`:

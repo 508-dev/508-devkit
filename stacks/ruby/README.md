@@ -39,7 +39,7 @@ lockfile:
 ```bash
 gem install bundler -v 4.0.13
 bundle install
-bundle update --bundler=4.0.13
+bundle lock --bundler=4.0.13
 ```
 
 Then validate the copied stack:

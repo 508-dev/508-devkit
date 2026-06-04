@@ -144,4 +144,4 @@ Before writing Bundler dependency cooldowns, run `bundle --version`.
 `source "https://rubygems.org", cooldown: 7` requires Bundler `4.0.13` or
 newer. If the target machine has an older Bundler, ask before upgrading it. Once
 cooldown is added, pin the compatible Bundler version in `Gemfile.lock` with
-`bundle update --bundler=4.0.13` or newer.
+`bundle lock --bundler=4.0.13` or newer.
