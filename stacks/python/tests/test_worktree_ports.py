@@ -26,11 +26,20 @@ def test_ports_for_base_uses_expected_offsets() -> None:
 
     ports = module.ports_for_base(8700)
 
-    assert ports["API_PORT"] == 8720
     assert ports["WEB_PORT"] == 8730
+    assert ports["API_PORT"] == 8720
     assert ports["POSTGRES_HOST_PORT"] == 8740
     assert ports["REDIS_HOST_PORT"] == 8750
     assert ports["OTEL_HTTP_PORT"] == 8780
+
+
+def test_env_values_print_web_url_first() -> None:
+    module = load_worktree_ports_module()
+
+    values = module.env_values({"WORKTREE_PORT_BLOCK_START": "9000"})
+
+    assert list(values)[:3] == ["WEB_URL", "WEB_PORT", "API_PORT"]
+    assert values["WEB_URL"] == "http://127.0.0.1:9000"
 
 
 def test_reserved_block_uses_compact_offsets() -> None:

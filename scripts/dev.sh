@@ -10,7 +10,11 @@ export WEB_HOST="${WEB_HOST:-127.0.0.1}"
 # watcher. Runtime-specific services, such as the Python API, live in stacks and
 # should be started from their stack scripts when selected for a target repo.
 echo "508 Devkit local stack"
-echo "  Web: framework-neutral TypeScript watcher; reserve WEB_PORT=${WEB_PORT} for your chosen web framework"
+echo "Assigned worktree ports:"
+./scripts/worktree-ports.sh env | sed 's/^/  /'
+echo
+echo "Starting services"
+echo "  Web: ${WEB_URL} (framework-neutral TypeScript watcher)"
 echo "  Postgres: 127.0.0.1:${POSTGRES_HOST_PORT}"
 echo "  Redis: 127.0.0.1:${REDIS_HOST_PORT}"
 echo

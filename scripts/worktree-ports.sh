@@ -214,6 +214,7 @@ calculate_ports() {
   POSTGRES_URL="postgresql://app:app@127.0.0.1:${POSTGRES_HOST_PORT}/app"
   DATABASE_URL="$POSTGRES_URL"
   REDIS_URL="redis://127.0.0.1:${REDIS_HOST_PORT}/0"
+  WEB_URL="http://127.0.0.1:${WEB_PORT}"
   WEB_API_BASE_URL="http://127.0.0.1:${API_PORT}"
   OTEL_EXPORTER_OTLP_ENDPOINT="http://127.0.0.1:${OTEL_HTTP_PORT}"
 }
@@ -221,8 +222,9 @@ calculate_ports() {
 print_env() {
   prefix="$1"
   calculate_ports
-  printf '%sAPI_PORT=%s\n' "$prefix" "$API_PORT"
+  printf '%sWEB_URL=%s\n' "$prefix" "$WEB_URL"
   printf '%sWEB_PORT=%s\n' "$prefix" "$WEB_PORT"
+  printf '%sAPI_PORT=%s\n' "$prefix" "$API_PORT"
   printf '%sWORKER_HEALTH_PORT=%s\n' "$prefix" "$WORKER_HEALTH_PORT"
   printf '%sPOSTGRES_HOST_PORT=%s\n' "$prefix" "$POSTGRES_HOST_PORT"
   printf '%sREDIS_HOST_PORT=%s\n' "$prefix" "$REDIS_HOST_PORT"
@@ -239,7 +241,7 @@ export_env() {
   export API_PORT WEB_PORT WORKER_HEALTH_PORT
   export POSTGRES_HOST_PORT REDIS_HOST_PORT
   export OTEL_HTTP_PORT POSTGRES_URL DATABASE_URL REDIS_URL
-  export WEB_API_BASE_URL OTEL_EXPORTER_OTLP_ENDPOINT
+  export WEB_URL WEB_API_BASE_URL OTEL_EXPORTER_OTLP_ENDPOINT
 }
 
 run_with_env() {

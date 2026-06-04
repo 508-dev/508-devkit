@@ -15,8 +15,8 @@ SPAN = 1000
 PORT_BLOCK_SIZE = 100
 RESERVED_BLOCK_SIZE_DEFAULT = 10
 HASH_OFFSETS = {
-    "API_PORT": 20,
     "WEB_PORT": 30,
+    "API_PORT": 20,
     "WORKER_HEALTH_PORT": 35,
     "POSTGRES_HOST_PORT": 40,
     "REDIS_HOST_PORT": 50,
@@ -228,8 +228,17 @@ def env_values(env: dict[str, str] | None = None) -> dict[str, str]:
     values = ports_for_environment(env or os.environ)
     postgres = values["POSTGRES_HOST_PORT"]
     redis = values["REDIS_HOST_PORT"]
+    web = values["WEB_PORT"]
     api = values["API_PORT"]
-    result = {name: str(port) for name, port in values.items()}
+    result = {
+        "WEB_URL": f"http://127.0.0.1:{web}",
+        "WEB_PORT": str(values["WEB_PORT"]),
+        "API_PORT": str(values["API_PORT"]),
+        "WORKER_HEALTH_PORT": str(values["WORKER_HEALTH_PORT"]),
+        "POSTGRES_HOST_PORT": str(values["POSTGRES_HOST_PORT"]),
+        "REDIS_HOST_PORT": str(values["REDIS_HOST_PORT"]),
+        "OTEL_HTTP_PORT": str(values["OTEL_HTTP_PORT"]),
+    }
     result.update(
         {
             "POSTGRES_URL": f"postgresql://app:app@127.0.0.1:{postgres}/app",

@@ -15,6 +15,11 @@ Local development follows the pattern used across existing projects:
 ./scripts/check-all.sh
 ```
 
+`worktree-ports.sh env` prints `WEB_URL` first, then `WEB_PORT`, then the
+remaining assigned ports and derived connection strings. Keep that order when
+adapting the helper so coding workspace tools discover the web surface before
+API or infrastructure URLs.
+
 ## Worktree Port Reservations
 
 `scripts/worktree-ports.sh` normally hashes the absolute git worktree path and

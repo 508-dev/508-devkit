@@ -85,6 +85,10 @@ extras          Optional workflow, deployment, and support add-ons
 8. Run `./scripts/docker-compose.sh up -d postgres redis`.
 9. Run `./scripts/dev.sh`.
 
+The port helper prints `WEB_URL` first, followed by `WEB_PORT` and the rest of
+the assigned worktree ports, so coding orchestrators that scan startup output
+for a URL open the web surface first.
+
 ## Worktree And Docker Hygiene
 
 Keep `.worktreeinclude` as a short allowlist of ignored local files that should follow a developer into new sibling worktrees. Typical entries are `.env`, `.env.local`, and `.sops.yaml`; never include generated directories or large state.
