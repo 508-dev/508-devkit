@@ -86,9 +86,20 @@ extras          Optional workflow, deployment, and support add-ons
 8. Run `./scripts/docker-compose.sh up -d postgres redis`.
 9. Run `./scripts/dev.sh`.
 
-The port helper prints `WEB_URL` first, followed by `WEB_PORT` and the rest of
-the assigned worktree ports, so coding orchestrators that scan startup output
-for a URL open the web surface first.
+The port helper's `env` command is the print-only URL/port mode. It prints
+`WEB_URL` first, followed by `WEB_PORT` and the rest of the assigned worktree
+ports, so coding orchestrators that scan startup output for a URL open the web
+surface first.
+
+If a stale same-worktree dev process is still holding the web port, rerun with:
+
+```bash
+./scripts/dev.sh --reclaim-ports
+```
+
+Port reclaim is opt-in and intentionally narrow: the script checks the listener
+with `lsof` and refuses to kill it unless the process chain looks like this
+worktree's own JS dev server.
 
 ## Worktree And Docker Hygiene
 
