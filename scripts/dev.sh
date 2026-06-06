@@ -227,7 +227,9 @@ reclaim_service_port() {
 }
 
 if [ "$RECLAIM_PORTS" = "1" ]; then
-  reclaim_service_port web "$WEB_PORT"
+  if ! reclaim_service_port web "$WEB_PORT"; then
+    echo "Continuing because the root dev script does not bind WEB_PORT." >&2
+  fi
 fi
 
 cleanup() {

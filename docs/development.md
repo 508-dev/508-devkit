@@ -12,7 +12,6 @@ Local development follows the pattern used across existing projects:
 ./scripts/worktree-ports.sh env
 ./scripts/docker-compose.sh up -d postgres redis
 ./scripts/dev.sh
-./scripts/dev.sh --reclaim-ports
 ./scripts/check-all.sh
 ```
 
@@ -75,9 +74,10 @@ the same checkout.
 
 Avoid reclaiming Docker-owned infrastructure ports from the host dev script.
 For Postgres, Redis, MinIO, and similar Compose services, use stable
-`COMPOSE_PROJECT_NAME` plus `docker compose up`/`down` so same-worktree runs are
-idempotent. If an infrastructure port is held by something else, report the
-owner and ask the developer to stop it or change the configured port.
+`COMPOSE_PROJECT_NAME` with `./scripts/docker-compose.sh up` / `down` so
+same-worktree runs are idempotent. If an infrastructure port is held by
+something else, report the owner and ask the developer to stop it or change the
+configured port.
 
 For multi-service repos, prefer a small service-aware mux helper instead of
 copying generic shell globs. A good pattern is:
