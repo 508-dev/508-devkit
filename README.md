@@ -4,7 +4,11 @@ Last reviewed: 2026-06-03
 
 Opinionated sane defaults and conventions for software projects.
 
-This is not a scaffolding CLI. It is a reference repo that gives agents and humans a shared baseline for how new projects should be shaped: repository layout, local development, dependency safety, CI, agent instructions, operational memory, and documentation. It comes from 508.dev practice, but it is meant to be useful outside 508.dev too.
+This is not a scaffolding CLI. It is a reference repo and GitHub template that
+gives agents and humans a shared baseline for how new projects should be shaped:
+repository layout, local development, dependency safety, CI, agent instructions,
+operational memory, and documentation. It comes from 508.dev practice, but it
+is meant to be useful outside 508.dev too.
 
 Point an agent at this repo when starting or normalizing a project. The agent should inspect the target repo, ask clarifying questions when the product or stack is ambiguous, and then copy or adapt only the conventions that fit.
 
@@ -33,7 +37,30 @@ Point an agent at this repo when starting or normalizing a project. The agent sh
 
 ## Quickstart
 
-Use the repo directly:
+### Create A New Repository
+
+Use GitHub's `Use this template` button to create a new repository from
+`508-dev/508-devkit`.
+
+GitHub templates copy the default-branch file tree. Treat the generated
+repository as a bootstrap workspace: the first PR should select the root
+hygiene files, stacks, extras, docs, and workflows that fit the product, then
+delete the rest.
+
+Recommended first prompt in the generated repo:
+
+```text
+This repository was generated from 508 Devkit. Do a template selection pass:
+inspect the product goal and existing files, keep only the root hygiene, stacks,
+extras, docs, and workflows that fit this project, delete the rest, rename all
+devkit/example identifiers, and run the narrowest relevant checks.
+```
+
+See `docs/github-template.md` for the cleanup checklist.
+
+### Normalize An Existing Repository
+
+Use the repo directly as a reference:
 
 ```text
 Use https://github.com/508-dev/508-devkit or a local checkout of it as the
@@ -80,11 +107,12 @@ extras          Optional workflow, deployment, and support add-ons
 2. Read `docs/pattern-report.md`.
 3. Read `docs/tooling.md`.
 4. Read `docs/template-proposal.md`.
-5. Read `docs/frontend.md`.
-6. Copy `.env.example` to `.env`.
-7. Run `./scripts/worktree-ports.sh env`.
-8. Run `./scripts/docker-compose.sh up -d postgres redis`.
-9. Run `./scripts/dev.sh`.
+5. Read `docs/github-template.md` when starting from GitHub's template button.
+6. Read `docs/frontend.md`.
+7. Copy `.env.example` to `.env`.
+8. Run `./scripts/worktree-ports.sh env`.
+9. Run `./scripts/docker-compose.sh up -d postgres redis`.
+10. Run `./scripts/dev.sh`.
 
 The port helper's `env` command is the print-only URL/port mode. It prints
 `WEB_URL` first, followed by `WEB_PORT` and the rest of the assigned worktree
@@ -124,7 +152,8 @@ commands to `pnpm install --frozen-lockfile`.
 
 ## Pick-And-Choose Stacks And Extras
 
-This repository intentionally includes files that conflict with each other. It is a starter template, not an installable preset.
+This repository intentionally includes files that conflict with each other. It
+is a template source, not an installable preset or final generated app.
 
 - `stacks/typescript/`: framework-neutral TypeScript conventions, Drizzle
   examples, Biome, Vitest.
@@ -141,11 +170,19 @@ This repository intentionally includes files that conflict with each other. It i
 - `extras/todo-to-issue/`: opt-in workflow for turning TODO comments into GitHub issues.
 - `.sops.yaml.example`: optional SOPS starter only for repos that need encrypted files.
 
-Keep root defaults for most new projects: shell wrappers, shell worktree ports, and example Compose-managed infra. Select language/runtime stacks such as `stacks/typescript/`, `stacks/python/`, future `stacks/go/`, or future `stacks/rust/` based on the target project. Treat stack files as conventions to adapt, not product code to copy blindly.
+Keep root defaults for most new projects: shell wrappers, shell worktree ports,
+and example Compose-managed infra. Select language/runtime stacks such as
+`stacks/typescript/`, `stacks/python/`, future `stacks/go/`, or future
+`stacks/rust/` based on the target project. Treat stack files as conventions to
+adapt, not product code to copy blindly. If this repo was used through
+GitHub's template button, do the same selection and pruning before feature work.
 
 ## Agent Notes
 
 - Never copy the whole repository into a target project.
+- A GitHub-generated repo starts with the whole file tree by design; make the
+  first project PR a template selection pass that removes irrelevant stacks,
+  extras, workflows, and docs.
 - Start with root hygiene files, then select only the stacks and extras that
   match the target repo.
 - Treat `stacks/` as peer language/runtime convention packs. TypeScript and

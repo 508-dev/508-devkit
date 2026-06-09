@@ -9,6 +9,15 @@ Use /path/to/508-devkit as the project bootstrap reference.
 Inspect my target repo, ask any necessary questions, then apply the relevant conventions.
 ```
 
+For a repository generated from GitHub's `Use this template` button:
+
+```text
+This repository was generated from 508 Devkit. Do a template selection pass:
+inspect the product goal and existing files, keep only the root hygiene, stacks,
+extras, docs, and workflows that fit this project, delete the rest, rename all
+devkit/example identifiers, and run the narrowest relevant checks.
+```
+
 ## Expected Agent Flow
 
 1. Inspect the target repo before editing.
@@ -16,8 +25,10 @@ Inspect my target repo, ask any necessary questions, then apply the relevant con
 3. Decide which devkit conventions already exist.
 4. Ask questions only when the product shape or stack cannot be inferred safely.
 5. Apply the smallest useful set of files.
-6. Run focused validation.
-7. Summarize what was adopted, skipped, and why.
+6. If the repo was generated from the GitHub template, delete unselected stacks,
+   extras, example app names, and docs that do not describe the target project.
+7. Run focused validation.
+8. Summarize what was adopted, skipped, and why.
 
 ## Example Questions
 
