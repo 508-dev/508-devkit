@@ -26,7 +26,8 @@ devkit/example identifiers, and run the narrowest relevant checks.
 4. Ask questions only when the product shape or stack cannot be inferred safely.
 5. Apply the smallest useful set of files.
 6. If the repo was generated from the GitHub template, delete unselected stacks,
-   extras, example app names, and docs that do not describe the target project.
+   extras, workflows, example app names, and docs that do not describe the
+   target project.
 7. Run focused validation.
 8. Summarize what was adopted, skipped, and why.
 

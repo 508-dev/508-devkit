@@ -7,7 +7,7 @@ coding agents can create project-specific files on demand without needing a
 scaffolding CLI.
 
 When used as a GitHub template repository, the first generated-repo change
-should be a selection pass. GitHub copies the default branch file tree, so users
+should be a selection pass. GitHub copies the default-branch file tree, so users
 and agents must prune unselected stacks, extras, example apps, and design-history
 docs before feature work starts.
 

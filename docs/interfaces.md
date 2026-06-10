@@ -14,7 +14,7 @@ It is best for:
 - Evolving scripts, CI, docs, and examples through normal PRs.
 - Letting any agent or human inspect the same artifact.
 
-GitHub's template button copies the default branch file tree. That is a useful
+GitHub's template button copies the default-branch file tree. That is a useful
 starting point, but generated repos should immediately run a template selection
 pass: keep applicable root hygiene, choose stacks and extras intentionally, and
 delete everything else before product work starts.
