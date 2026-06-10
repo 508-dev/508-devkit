@@ -21,6 +21,11 @@ Canonical repo: https://github.com/508-dev/508-devkit
   object storage, CODEOWNERS, Gitleaks, Dependency Review, and TODO-to-issue.
 - `.context/` is workspace-local agent scratch and must not be committed.
 
+When the target repo was generated from GitHub's `Use this template` button,
+treat the first change as a template selection pass. GitHub copies the
+default-branch file tree; the generated repo should not keep every stack, extra,
+example app, or design-history document.
+
 ## Workflow
 
 1. Inspect the target repo first:
@@ -71,7 +76,9 @@ Canonical repo: https://github.com/508-dev/508-devkit
    - Use SOPS only when encrypted tracked files are needed.
 3. Copy or adapt files from the `508-devkit` repository.
 4. Update names, package scopes, ports, and docs to fit the target project.
-5. Run the narrowest relevant checks.
+5. In GitHub-template-generated repos, delete unselected stacks, extras,
+   workflows, example names, and docs before starting product feature work.
+6. Run the narrowest relevant checks.
 
 ## Worktree And Docker Files
 

@@ -9,9 +9,15 @@ Use this repository as the source of truth.
 It is best for:
 
 - Copying concrete files into a new project.
+- Creating a bootstrap repository through GitHub's `Use this template` button.
 - Reviewing conventions in GitHub.
 - Evolving scripts, CI, docs, and examples through normal PRs.
 - Letting any agent or human inspect the same artifact.
+
+GitHub's template button copies the default-branch file tree. That is a useful
+starting point, but generated repos should immediately run a template selection
+pass: keep applicable root hygiene, choose stacks and extras intentionally, and
+delete everything else before product work starts.
 
 ## Downloadable Skill
 

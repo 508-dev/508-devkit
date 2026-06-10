@@ -2,7 +2,14 @@
 
 ## Design Goal
 
-This template captures recurring conventions from existing repositories so coding agents can create project-specific files on demand without needing a scaffolding CLI.
+This template captures recurring conventions from existing repositories so
+coding agents can create project-specific files on demand without needing a
+scaffolding CLI.
+
+When used as a GitHub template repository, the first generated-repo change
+should be a selection pass. GitHub copies the default-branch file tree, so users
+and agents must prune unselected stacks, extras, example apps, and design-history
+docs before feature work starts.
 
 It is optimized for:
 
@@ -51,9 +58,18 @@ It is optimized for:
 - For product repos with browser UI, add Playwright after the first interactive flow exists.
 - For LLM features, add deterministic eval fixtures before live model evals.
 
+## GitHub Template Mode
+
+Marking this repo as a GitHub template improves discoverability, but it does
+not change the pick-and-choose model. Generated repos should keep the broad root
+hygiene, explicitly select one or more stacks, and remove irrelevant examples.
+
+See `docs/github-template.md` for the generated-repo cleanup checklist.
+
 ## Non-Goals
 
 - No CLI generator.
+- No expectation that generated repos keep every file from this repo.
 - No mandatory deployment platform.
 - No full app implementation.
 - No secret management opinion beyond environment-variable contracts and CI secret boundaries.
