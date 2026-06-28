@@ -12,6 +12,8 @@ Python package, or Python-first service tooling.
 - `scripts/worktree-ports.py`: Python implementation of the worktree port helper.
 - `scripts/{lint,format,typecheck,test,check-all}.sh`: validation wrappers for
   this stack.
+- Type checker config examples for MyPy, Pyright, Pyrefly, and ty in
+  `pyproject.toml`.
 
 The root devkit uses `scripts/worktree-ports.sh` by default so projects are not
 forced to include Python just for port allocation.
@@ -53,6 +55,11 @@ settings discovery.
   Python is part of the target runtime or tooling.
 - Copy `apps/`, `packages/`, `pyproject.toml`, and `uv.lock` together so the
   workspace and lockfile stay coherent.
+- Keep one type checker as the CI gate. The default stack still runs MyPy
+  because it is mature, Python-native, and has the widest plugin ecosystem.
+  Prefer Pyrefly for new projects that want a fast modern checker and language
+  server, Pyright when the team standardizes on Pylance or the Pyright CLI, and
+  ty as an advisory experiment until it exits beta.
 - Keep root port helpers shell-based unless the target repo intentionally wants
   Python helper scripts.
 - If copying this stack's `scripts/dev.sh`, copy
