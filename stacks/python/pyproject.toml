@@ -81,6 +81,54 @@ warn_redundant_casts = true
 no_implicit_optional = true
 ignore_missing_imports = true
 
+# Optional alternative type checker examples. Keep one checker as the
+# repository's CI gate, then use the others for editor feedback or migration
+# trials.
+[tool.pyright]
+pythonVersion = "3.12"
+typeCheckingMode = "strict"
+include = [
+  "apps/api/src",
+  "apps/api/tests",
+  "packages/shared/src",
+  "tests",
+]
+extraPaths = [
+  "apps/api/src",
+  "packages/shared/src",
+]
+venvPath = "."
+venv = ".venv"
+reportMissingTypeStubs = "warning"
+
+[tool.pyrefly]
+python-version = "3.12"
+project-includes = [
+  "apps/api/src",
+  "apps/api/tests",
+  "packages/shared/src",
+  "tests",
+]
+search-path = [
+  "apps/api/src",
+  "packages/shared/src",
+]
+
+[tool.ty.environment]
+python-version = "3.12"
+root = [
+  "apps/api/src",
+  "packages/shared/src",
+]
+
+[tool.ty.src]
+include = [
+  "apps/api/src",
+  "apps/api/tests",
+  "packages/shared/src",
+  "tests",
+]
+
 [tool.coverage.run]
 source = ["example_api", "example_shared"]
 omit = ["*/tests/*"]

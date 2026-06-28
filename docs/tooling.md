@@ -40,6 +40,25 @@ Keep Python configuration in `pyproject.toml`. The Python stack shows Pydantic
 settings/boundary schemas and Alembic migrations as examples; keep them when
 they fit the target repo and replace them when an existing choice is better.
 
+The Python stack includes example configuration for MyPy, Pyright, Pyrefly, and
+ty, but projects should choose one type checker as the required CI gate.
+Recommended defaults:
+
+- Use Pyrefly for new Python projects that want fast CLI checks and a modern
+  language server, provided the team is comfortable with its monthly release
+  cadence and occasional new diagnostics on upgrade.
+- Use Pyright when the team already standardizes on VS Code/Pylance, wants a
+  mature standards-focused checker, or needs strong cross-editor language
+  server behavior.
+- Keep MyPy when the project relies on MyPy plugins, framework-specific typing
+  behavior, or maximum ecosystem compatibility.
+- Use ty only as an advisory or experimental checker until its beta/0.0.x
+  version policy settles.
+
+When switching the CI gate, update `stacks/python/scripts/typecheck.sh`, add the
+chosen checker to the dev dependency group, and regenerate `uv.lock` with the
+repo's supply-chain cooldown policy in mind.
+
 ## Ruby Stack
 
 Use Bundler for Ruby installs and command execution when the target project
