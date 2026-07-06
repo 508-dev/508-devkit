@@ -9,13 +9,16 @@ bootstrap workspace, not as the final project shape.
 
 1. Create a new repository from the GitHub `Use this template` button.
 2. Make the first project PR a template selection pass.
-3. Keep the root hygiene files that apply to most software repos.
-4. Select only the language stacks and extras that match the project.
-5. Delete unselected examples, placeholder workflows, and docs that no longer
+3. Use `MANIFEST.md` to produce a selection report before editing. Cover every
+   top-level path in the devkit and generated repo with an adopt, adapt, skip,
+   delete, or defer decision and a one-line reason.
+4. Keep the root hygiene files that apply to most software repos.
+5. Select only the language stacks and extras that match the project.
+6. Delete unselected examples, placeholder workflows, and docs that no longer
    describe the project.
-6. Rename package names, env defaults, service names, and documentation from
+7. Rename package names, env defaults, service names, and documentation from
    devkit examples to the real product.
-7. Run the narrowest relevant checks before building product features.
+8. Run the narrowest relevant checks before building product features.
 
 The selection pass is part of using the template. Do not start feature work
 while the repository still contains irrelevant stacks or optional extras.
@@ -66,7 +69,9 @@ Use this prompt immediately after creating a repository from the template:
 
 ```text
 This repository was generated from 508 Devkit. Do a template selection pass:
-inspect the product goal and existing files, keep only the root hygiene, stacks,
-extras, docs, and workflows that fit this project, delete the rest, rename all
-devkit/example identifiers, and run the narrowest relevant checks.
+use MANIFEST.md to produce a selection report before editing, covering every
+top-level path in the devkit and this repo with adopt/adapt/skip/delete/defer
+and a one-line reason. Then keep only the root hygiene, stacks, extras, docs,
+and workflows that fit this project, delete the rest, rename all devkit/example
+identifiers, and run the narrowest relevant checks.
 ```

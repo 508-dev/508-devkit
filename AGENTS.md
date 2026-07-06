@@ -24,9 +24,14 @@
 
 ## Repository Shape
 
-- `stacks/typescript`: framework-neutral Bun/TypeScript conventions.
-- `scripts`: stable project entrypoints.
+- `AGENTS.md`: canonical agent operating instructions.
+- `MANIFEST.md`: file inventory and template-selection checklist.
+- `DECISIONS.md`: decision authority for devkit topology and policy.
 - `docs`: contributor-facing documentation.
+- `extras`: optional workflows, deployment examples, and support add-ons.
+- `scripts`: stable project entrypoints.
+- `skills`: optional project-local agent skills.
+- `stacks/typescript`: framework-neutral Bun/TypeScript conventions.
 - `stacks/python`: optional Python API/shared-package workspace.
 - `stacks/ruby`: optional Ruby/Rails/Rack workspace conventions.
 - `.context`: gitignored workspace-local scratch for Conductor and agents.
@@ -46,6 +51,10 @@
 ## Editing Rules
 
 - Read target files, callers, exports, tests, and obvious shared utilities before editing.
+- When applying this devkit or cleaning up a GitHub-template-generated repo,
+  read `MANIFEST.md` and produce a selection report before editing. Cover every
+  top-level path in this devkit and the target repo with an adopt, adapt, skip,
+  delete, or defer decision and a one-line reason.
 - Keep edits surgical.
 - Do not reformat unrelated files.
 - Add or update tests when behavior changes.

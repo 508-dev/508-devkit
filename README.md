@@ -1,6 +1,6 @@
 # 508 Devkit
 
-Last reviewed: 2026-06-03
+Last reviewed: 2026-07-05
 
 Opinionated sane defaults and conventions for software projects.
 
@@ -51,9 +51,11 @@ Recommended first prompt in the generated repo:
 
 ```text
 This repository was generated from 508 Devkit. Do a template selection pass:
-inspect the product goal and existing files, keep only the root hygiene, stacks,
-extras, docs, and workflows that fit this project, delete the rest, rename all
-devkit/example identifiers, and run the narrowest relevant checks.
+use MANIFEST.md to produce a selection report before editing, covering every
+top-level path in the devkit and this repo with adopt/adapt/skip/delete/defer
+and a one-line reason. Then keep only the root hygiene, stacks, extras, docs,
+and workflows that fit this project, delete the rest, rename all devkit/example
+identifiers, and run the narrowest relevant checks.
 ```
 
 See `docs/github-template.md` for the cleanup checklist.
@@ -79,6 +81,9 @@ Run it as /508-devkit, /bootstrap-project, or whatever command name your agent c
 Expected agent behavior:
 
 - Inspect the target repo before editing.
+- Use `MANIFEST.md` to produce a selection report before editing. Cover every
+  top-level path in the devkit and the target repo with an adopt, adapt, skip,
+  delete, or defer decision and a one-line reason.
 - Ask about product shape, deployment target, data stores, and language/runtime choices when those are unclear.
 - Automatically pick up existing conventions when the repo already has them.
 - Prefer the devkit defaults for new projects unless there is a clear reason to choose a stack or extra.
@@ -95,20 +100,25 @@ bun install --frozen-lockfile
 ## Layout
 
 ```text
-stacks          Language/runtime conventions such as TypeScript and Python
-scripts         Stable human/agent entrypoints
-docs            Durable project documentation
-extras          Optional workflow, deployment, and support add-ons
+AGENTS.md      Canonical agent operating instructions
+MANIFEST.md    File inventory and template-selection checklist
+DECISIONS.md   Decision authority for devkit topology and policy
+docs           Durable project documentation
+extras         Optional workflow, deployment, and support add-ons
+scripts        Stable human/agent entrypoints
+skills         Optional project-local agent skills
+stacks         Language/runtime convention packs
 ```
 
 ## Read Next
 
 1. Read `DECISIONS.md`.
-2. Read `docs/pattern-report.md`.
-3. Read `docs/tooling.md`.
-4. Read `docs/template-proposal.md`.
-5. Read `docs/github-template.md` when starting from GitHub's template button.
-6. Read `docs/frontend.md`.
+2. Read `MANIFEST.md`.
+3. Read `docs/github-template.md` when starting from GitHub's template button.
+4. Read `docs/tooling.md`.
+5. Read `docs/frontend.md`.
+6. Read `docs/pattern-report.md` and `docs/template-proposal.md` when you need
+   devkit design history.
 7. Copy `.env.example` to `.env`.
 8. Run `./scripts/worktree-ports.sh env`.
 9. Run `./scripts/docker-compose.sh up -d postgres redis`.
@@ -172,10 +182,10 @@ is a template source, not an installable preset or final generated app.
 
 Keep root defaults for most new projects: shell wrappers, shell worktree ports,
 and example Compose-managed infra. Select language/runtime stacks such as
-`stacks/typescript/`, `stacks/python/`, future `stacks/go/`, or future
-`stacks/rust/` based on the target project. Treat stack files as conventions to
-adapt, not product code to copy blindly. If this repo was used through
-GitHub's template button, do the same selection and pruning before feature work.
+`stacks/typescript/`, `stacks/python/`, or `stacks/ruby/` based on the target
+project. Treat stack files as conventions to adapt, not product code to copy
+blindly. If this repo was used through GitHub's template button, do the same
+selection and pruning before feature work.
 
 ## Agent Notes
 

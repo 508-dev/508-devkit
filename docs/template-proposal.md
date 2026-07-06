@@ -30,9 +30,8 @@ It is optimized for:
 ├── .github/workflows/
 ├── stacks/
 │   ├── python/
-│   ├── typescript/
-│   ├── go/
-│   └── rust/
+│   ├── ruby/
+│   └── typescript/
 ├── extras/
 ├── docs/
 └── scripts/
