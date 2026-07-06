@@ -6,10 +6,13 @@
 
 - `README.md`: overview and quickstart.
 - `AGENTS.md`: agent operating instructions.
+- `DECISIONS.md`: decision authority for devkit topology and policy.
+- `MANIFEST.md`: file inventory and template-selection checklist.
 - `docs/pattern-report.md`: source patterns behind the scaffold.
 - `docs/template-proposal.md`: design rationale for included files.
 - `docs/frontend.md`: framework-neutral frontend policy.
 - `docs/github-workflows.md`: GitHub templates and workflow guidance.
+- `docs/github-template.md`: generated-repo cleanup checklist.
 - `docs/supply-chain.md`: dependency safety policy.
 
 ## Key Conventions
@@ -24,6 +27,8 @@
 - Use deterministic worktree ports from `scripts/worktree-ports.sh`.
 - Keep `.context/` gitignored and workspace-local; durable knowledge belongs in tracked docs.
 - Put language/runtime conventions in `stacks/` and opt-in add-ons in `extras/`.
+- Before applying the devkit, use `MANIFEST.md` to produce a selection report
+  covering every top-level path in the devkit and target repo.
 
 ## Validation
 

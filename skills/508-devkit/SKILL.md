@@ -3,7 +3,7 @@
 Use this skill when creating or normalizing a software project with 508 Devkit
 conventions.
 
-Last reviewed: 2026-06-03
+Last reviewed: 2026-07-05
 
 Preserve the devkit's topology and policy, but verify current versions, action
 SHAs, and API documentation before applying them to a target repo.
@@ -28,7 +28,13 @@ example app, or design-history document.
 
 ## Workflow
 
-1. Inspect the target repo first:
+1. Inspect the devkit decision authority and inventory:
+   - `DECISIONS.md`.
+   - `MANIFEST.md`.
+   - `docs/supply-chain.md` when dependency policy is relevant.
+   - `docs/github-template.md` when the target repo was generated from the
+     GitHub template.
+2. Inspect the target repo before editing:
    - `DECISIONS.md` when present.
    - `AGENTS.md`, `CLAUDE.md`, Cursor rules.
    - `pyproject.toml`, `uv.lock` when Python is present.
@@ -39,7 +45,11 @@ example app, or design-history document.
    - `.github/workflows`.
    - `.env.example`.
    - `scripts/`.
-2. Decide which devkit pieces apply. Do not infer a language, framework,
+3. Produce a selection report before editing. It must include every top-level
+   path in the devkit and every top-level path in the target repo, with columns
+   for path, source, decision, and reason. Use decisions such as `adopt`,
+   `adapt`, `skip`, `delete`, and `defer`.
+4. Decide which devkit pieces apply. Do not infer a language, framework,
    database, ORM, migration tool, object store, or package manager from the
    devkit alone.
    - Start with broadly useful repo hygiene: agent instructions, stable scripts,
@@ -74,11 +84,11 @@ example app, or design-history document.
      graph-based vulnerability, license, or dependency-change reporting and has
      enabled the dependency graph.
    - Use SOPS only when encrypted tracked files are needed.
-3. Copy or adapt files from the `508-devkit` repository.
-4. Update names, package scopes, ports, and docs to fit the target project.
-5. In GitHub-template-generated repos, delete unselected stacks, extras,
+5. Copy or adapt files from the `508-devkit` repository.
+6. Update names, package scopes, ports, and docs to fit the target project.
+7. In GitHub-template-generated repos, delete unselected stacks, extras,
    workflows, example names, and docs before starting product feature work.
-6. Run the narrowest relevant checks.
+8. Run the narrowest relevant checks.
 
 ## Worktree And Docker Files
 

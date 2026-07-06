@@ -13,23 +13,29 @@ For a repository generated from GitHub's `Use this template` button:
 
 ```text
 This repository was generated from 508 Devkit. Do a template selection pass:
-inspect the product goal and existing files, keep only the root hygiene, stacks,
-extras, docs, and workflows that fit this project, delete the rest, rename all
-devkit/example identifiers, and run the narrowest relevant checks.
+use MANIFEST.md to produce a selection report before editing, covering every
+top-level path in the devkit and this repo with adopt/adapt/skip/delete/defer
+and a one-line reason. Then keep only the root hygiene, stacks, extras, docs,
+and workflows that fit this project, delete the rest, rename all devkit/example
+identifiers, and run the narrowest relevant checks.
 ```
 
 ## Expected Agent Flow
 
 1. Inspect the target repo before editing.
-2. Read existing `AGENTS.md`, package manifests, lockfiles, workflows, Compose files, scripts, and docs.
-3. Decide which devkit conventions already exist.
-4. Ask questions only when the product shape or stack cannot be inferred safely.
-5. Apply the smallest useful set of files.
-6. If the repo was generated from the GitHub template, delete unselected stacks,
+2. Read `DECISIONS.md`, `MANIFEST.md`, and existing `AGENTS.md`, package
+   manifests, lockfiles, workflows, Compose files, scripts, and docs.
+3. Produce a selection report before editing. Cover every top-level path in the
+   devkit and target repo with an adopt, adapt, skip, delete, or defer decision
+   and a one-line reason.
+4. Decide which devkit conventions already exist.
+5. Ask questions only when the product shape or stack cannot be inferred safely.
+6. Apply the smallest useful set of files.
+7. If the repo was generated from the GitHub template, delete unselected stacks,
    extras, workflows, example app names, and docs that do not describe the
    target project.
-7. Run focused validation.
-8. Summarize what was adopted, skipped, and why.
+8. Run focused validation.
+9. Summarize what was adopted, skipped, and why.
 
 ## Example Questions
 
