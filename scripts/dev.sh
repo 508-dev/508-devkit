@@ -3,6 +3,7 @@ set -eu
 
 cd "$(dirname "$0")/.."
 WORKTREE_ROOT="$(pwd -P)"
+cd "$WORKTREE_ROOT"
 
 usage() {
   cat >&2 <<'EOF'
