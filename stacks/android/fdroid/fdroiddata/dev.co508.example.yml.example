@@ -1,0 +1,21 @@
+Categories:
+  - Multimedia
+License: GPL-3.0-only
+AuthorName: 508.dev
+AuthorEmail: caleb@508.dev
+AuthorWebSite: https://508.dev
+WebSite: https://508.dev
+SourceCode: https://github.com/508-dev/example
+IssueTracker: https://github.com/508-dev/example/issues
+Changelog: https://github.com/508-dev/example/blob/HEAD/CHANGELOG.md
+AutoName: Example App
+
+RepoType: git
+Repo: https://github.com/508-dev/example.git
+
+Builds: []
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 0.1.0
+CurrentVersionCode: 1000

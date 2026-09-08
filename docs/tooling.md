@@ -84,6 +84,42 @@ adapt to `bin/dev`, Rails, Rack, RSpec, or Minitest-style test directories.
 When adding Bundler cooldowns, require Bundler `4.0.13` or newer and pin that
 Bundler version in `Gemfile.lock` before handing off the target repo.
 
+## Android Stack
+
+Use `stacks/android` for native Android (Kotlin + Jetpack Compose) projects.
+Unlike the other stacks, its reusable part is the release/publishing pipeline
+and a set of recurring architecture decisions, not a local-dev script set —
+see `stacks/android/README.md` for the full rationale.
+
+Required checks for `stacks/android`:
+
+```bash
+./gradlew ktlintCheck
+./gradlew testDebugUnitTest
+./gradlew lintDebug
+./gradlew assembleDebug
+```
+
+Track Gradle/Kotlin/Compose/library versions in `gradle/libs.versions.toml`
+in the target repo, not in this devkit — Renovate natively understands Gradle
+version catalogs and opens PRs against it on the repo's normal cooldown,
+which is the expected update path. Don't hand-edit versions opportunistically
+outside of that unless fixing something broken.
+
+**AGP 9+ has built-in Kotlin support.** Do not apply
+`org.jetbrains.kotlin.android` (`kotlin-android`) alongside it — AGP 9.0+
+compiles Kotlin itself, and applying that plugin on top is a hard build
+error, not a warning. See `stacks/android/README.md` for the rest of the
+recurring Android decisions (Compose over Views, no DI framework by default,
+Room vs. a flatter store, SDK level defaults, and the reverse-DNS
+application-ID gotcha).
+
+The GPL-3/free-software-dependency constraint (AndroidX and
+Kotlin-stdlib-class libraries only, no Google Play Services, no Firebase) is
+specific to apps that target F-Droid distribution. Confirm that goal with the
+user before applying it or the F-Droid publishing pipeline — not every
+Android app in this devkit's scope needs either.
+
 ## Dependency Safety
 
 Use dependency cooldowns and frozen installs:

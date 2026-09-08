@@ -108,6 +108,22 @@ Use `cooldown: 0`, `bundle install --cooldown 0`, or `BUNDLE_COOLDOWN=0` only
 for intentional exceptions such as emergency security fixes. Document the
 exception in the PR or release note.
 
+## Gradle (Android)
+
+Use this when a project selects the Android stack (`stacks/android`).
+
+Gradle has no package-manager-level cooldown flag comparable to Bun/uv/pnpm/
+Bundler. Renovate is the whole mechanism: it natively understands Gradle
+version catalogs and opens PRs against `gradle/libs.versions.toml` on the
+repo's normal `minimumReleaseAge`, no extra Renovate config required. Don't
+hand-edit dependency versions in that file opportunistically outside of a
+Renovate PR unless fixing something broken.
+
+Verify Gradle wrapper integrity via `distributionSha256Sum` in
+`gradle/wrapper/gradle-wrapper.properties`, and update both together when
+bumping the wrapper version. CI should build against the committed wrapper
+only — never a floating Gradle version.
+
 ## CI
 
 Use frozen or locked installs:

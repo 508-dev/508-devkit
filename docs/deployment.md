@@ -25,6 +25,22 @@ When applying this devkit to a project, record the deployment decision here:
 | Coolify | Self-hosted platform-style deploys. | Adds a platform to operate and upgrade. |
 | Kubernetes | Larger teams with existing cluster operations. | Too much machinery for most new projects. |
 
+## Mobile Store Publishing
+
+Native mobile apps aren't a deployment-platform decision at all — there's no
+server to host. If the target project selects `stacks/android`, use its
+release pipeline instead of anything in this file: `version.txt` +
+release-please decide the version, a release-PR merge is what ships it, and
+CI publishes signed builds to GitHub Releases, Google Play (internal track),
+and F-Droid (a self-hosted repo plus an optional f-droid.org submission). See
+`stacks/android/README.md` for the full model, including why the two jobs
+live in one workflow run and how signing keys are handled.
+
+The target repo's own `docs/deployment.md` should be rewritten to describe
+that concrete pipeline rather than keeping this file's generic
+platform-decision-record shape — see `stacks/android/README.md` → "Docs To
+Write In The Target Repo".
+
 ## Workflow Guidance
 
 Keep deployment workflows platform-specific and explicit. A project should add deploy CI only after the platform is chosen and secrets are configured.

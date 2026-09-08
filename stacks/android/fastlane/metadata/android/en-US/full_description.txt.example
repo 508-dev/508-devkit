@@ -1,0 +1,9 @@
+The full store listing description, shown on the app's Play Store and F-Droid
+pages. Plain text (F-Droid) / limited HTML (Play) — check each store's current
+formatting rules before relying on markup.
+
+This is the single source of store copy: scripts/fdroid-publish.sh copies this
+whole fastlane/metadata/android/ tree into the self-hosted F-Droid repo, the
+release workflow renames the per-release changelog into the layout Play wants,
+and f-droid.org reads it from the repo directly for the one-time submission.
+Edit it here, not per-store.

@@ -1,0 +1,80 @@
+# f-droid.org Submission
+
+`dev.co508.example.yml.example` in this directory is the payload for a
+one-time merge request to
+[gitlab.com/fdroid/fdroiddata](https://gitlab.com/fdroid/fdroiddata), copied
+there (after renaming to the real application ID, with the `.example` suffix
+dropped) as `metadata/<applicationId>.yml`. See `stacks/android/README.md` →
+"F-Droid" for the submission steps.
+
+**The metadata file itself must carry no comments.** fdroiddata's CI runs
+`fdroid rewritemeta` on any changed file and fails the job if that produces a
+diff — and `rewritemeta` unconditionally strips every leading comment. A
+header explaining the file lasts exactly one rewrite pass before their own
+lint deletes it and breaks CI on the next unrelated change. Keep explanatory
+context here instead, in the target repo's copy of this README.
+
+## Why it's shaped this way
+
+- **Nothing in the target repo pushes to f-droid.org.** It builds and signs on
+  its own infrastructure, on its own schedule, with its own key. This file is
+  read once at merge time and from then on only by their bot.
+- **`UpdateCheckMode: Tags`** makes that bot watch the repo for new tags.
+  Deliberately no tag pattern after it if release-please's `package-name` puts
+  a component prefix on every tag it cuts (e.g. `example-v0.1.2`, not
+  `v0.1.2`) — a pattern like `v*` would match a hand-cut baseline tag and miss
+  every real release since. Only the very first, hand-tagged baseline release
+  (used to seed release-please before it had ever run) is bare.
+- **`AutoUpdateMode: Version`** (no tag pattern after it) makes it read
+  `versionName`/`versionCode` out of `app/build.gradle.kts` at that tag and
+  append a new `Builds:` entry itself — the reason those two values have to
+  stay plain literals in that file, not an expression. An older syntax,
+  `Version v%v`, supplied a commit-tag pattern; it's not valid on current
+  fdroiddata schemas, and it was always redundant under `UpdateCheckMode:
+  Tags` anyway — `checkupdates` already knows the tag, and it resolves that tag
+  to a commit rather than writing the tag name.
+- **`commit:` is always a full 40-character hash, never a tag or branch.**
+  fdroiddata maintainers ask for this on review, and their own bot agrees:
+  `fdroid checkupdates --auto` writes `commit: ce7698e5…` for a tag it just
+  found. A tag is mutable — it can be moved or deleted after review, which
+  would silently change what F-Droid builds and signs. A hash cannot. Resolve
+  it with `git rev-list -n1 <tag>`; don't read it off `git log`, which tracks
+  the branch tip rather than the release.
+- **No `Summary`/`Description` fields.** F-Droid reads
+  `fastlane/metadata/android/` from the repo instead, so the store copy has
+  one source rather than three.
+- **`AutoName:` is required, not optional**, and must match the app's
+  `app_name` string resource exactly. Any app with `RepoType` set and
+  `UpdateCheckMode` other than `None`/`Static` — which is every app here — gets
+  its display name auto-derived by `checkupdates` from the built manifest on
+  every CI run, and their `checkupdates` job fails if that produces any diff
+  against what's committed. Leaving `AutoName` out doesn't skip the check, it
+  just guarantees the first run adds it and fails the diff.
+
+## Before submitting
+
+Run against a real fdroiddata checkout, not just schema validation — CI runs
+both `fdroid rewritemeta` and `fdroid checkupdates` and fails on any diff
+either produces, neither of which schema validation alone catches:
+
+```bash
+python3 -m venv /tmp/fdroid-venv && /tmp/fdroid-venv/bin/pip install fdroidserver
+mkdir -p /tmp/fdroiddata-check/metadata
+cp fdroid/fdroiddata/<applicationId>.yml /tmp/fdroiddata-check/metadata/
+printf 'repo_url: https://example.org/fdroid/repo\nrepo_name: check\n' > /tmp/fdroiddata-check/config.yml
+chmod 600 /tmp/fdroiddata-check/config.yml
+cd /tmp/fdroiddata-check
+git init --quiet && git add -A && git -c user.email=t@t -c user.name=t commit --quiet -m init
+
+/tmp/fdroid-venv/bin/fdroid rewritemeta <applicationId>
+git --no-pager diff --exit-code || echo "rewritemeta changed the file — fix before submitting"
+
+mkdir -p build   # checkupdates clones the real repo under here
+/tmp/fdroid-venv/bin/fdroid checkupdates <applicationId>
+git --no-pager diff --exit-code || echo "checkupdates changed the file — fix before submitting"
+```
+
+`checkupdates` needs a real, already-pushed tag to check out (it clones the
+repo from the `Repo:` URL in the metadata), so run it after tagging a release,
+not before. Two clean `git diff --exit-code`s means the file is already in
+canonical form for both of fdroiddata's checks.

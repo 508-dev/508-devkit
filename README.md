@@ -20,6 +20,9 @@ Point an agent at this repo when starting or normalizing a project. The agent sh
   shown first.
 - Optional `uv` Python workspace conventions.
 - Optional Ruby/Rails/Rack conventions.
+- Optional native Android (Kotlin/Compose) release and publishing
+  conventions: release-please versioning, a GitHub Actions release pipeline,
+  and Google Play/F-Droid publishing.
 - Dependency cooldowns for Bun, pnpm, uv, and Bundler.
 - Host-run development services.
 - Docker Compose examples for local infrastructure such as databases and
@@ -170,6 +173,10 @@ is a template source, not an installable preset or final generated app.
 - `stacks/python/`: optional Python API/shared-package workspace.
 - `stacks/ruby/`: optional Ruby/Rails/Rack conventions with Bundler cooldown
   guidance.
+- `stacks/android/`: optional native Android (Kotlin/Compose) convention
+  pack — release-please versioning, a GitHub Actions release pipeline, and
+  Google Play/F-Droid publishing. No app scaffold; app structure is too
+  product-specific to template.
 - `stacks/typescript/pnpm/`: pnpm root files and CI fragment for larger TypeScript workspaces.
 - `extras/dev-scripts/`: JS-first script variants and JS implementations of helper scripts.
 - `extras/dockerfiles/`: opt-in Dockerfile examples for deployment parity.
@@ -196,8 +203,8 @@ selection and pruning before feature work.
 - Start with root hygiene files, then select only the stacks and extras that
   match the target repo.
 - Treat `stacks/` as peer language/runtime convention packs. TypeScript and
-  Python are examples, not universal defaults. Ruby is available as an
-  opt-in convention pack when the target repo actually uses Ruby.
+  Python are examples, not universal defaults. Ruby and Android are available
+  as opt-in convention packs when the target repo actually uses them.
 - Treat `extras/` as opt-in workflows or deployment helpers that may require
   repo settings, real owners, or team process.
 - Keep `.context/` gitignored. Promote durable learnings into tracked docs
