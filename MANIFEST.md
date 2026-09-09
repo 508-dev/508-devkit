@@ -77,6 +77,7 @@ Disposition tags:
 | `stacks/typescript/pnpm/` | `select-per-stack` | pnpm root files and CI fragment for pnpm workspaces. |
 | `stacks/python/` | `select-per-stack` | Optional uv Python API/shared-package workspace with Ruff, MyPy, Pytest, Pydantic, and Alembic examples. |
 | `stacks/ruby/` | `select-per-stack` | Optional Ruby/Rails/Rack conventions with Bundler cooldown guidance. |
+| `stacks/android/` | `select-per-stack` | Native Android (Kotlin/Compose) convention pack: release-please versioning, GitHub Actions release pipeline, Google Play and F-Droid (self-hosted + f-droid.org) publishing, and recurring architecture decisions. |
 
 ## Extras Inventory
 

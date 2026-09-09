@@ -27,6 +27,10 @@
 - Use deterministic worktree ports from `scripts/worktree-ports.sh`.
 - Keep `.context/` gitignored and workspace-local; durable knowledge belongs in tracked docs.
 - Put language/runtime conventions in `stacks/` and opt-in add-ons in `extras/`.
+- `stacks/android` covers native Android release/versioning/publishing
+  conventions (release-please, GitHub Actions, Play, F-Droid) — no app
+  scaffold. Never hand-edit `versionCode`/`versionName`; derive them with
+  `scripts/sync-version.sh` from `version.txt`.
 - Before applying the devkit, use `MANIFEST.md` to produce a selection report
   covering every top-level path in the devkit and target repo.
 

@@ -34,6 +34,9 @@
 - `stacks/typescript`: framework-neutral Bun/TypeScript conventions.
 - `stacks/python`: optional Python API/shared-package workspace.
 - `stacks/ruby`: optional Ruby/Rails/Rack workspace conventions.
+- `stacks/android`: optional native Android (Kotlin/Compose) release and
+  publishing convention pack — no app scaffold, since app structure is too
+  product-specific to template.
 - `.context`: gitignored workspace-local scratch for Conductor and agents.
 
 ## Development Workflow
@@ -72,6 +75,10 @@
   `cooldown:` source option requires Bundler `4.0.13` or newer. If Bundler is
   older, ask before upgrading it; do not add cooldown syntax that the target
   repo's Bundler cannot parse.
+- When selecting the Android stack, do not assume F-Droid distribution or
+  hand-edit `versionCode`/`versionName` — see `stacks/android/README.md` for
+  the versioning model and the GPL-3/free-software-dependency constraint,
+  which only applies when the target app actually targets F-Droid.
 - The TypeScript stack includes Drizzle examples for database access. Keep
   Drizzle when it fits; replace it when the target repo already uses another
   data-access layer.

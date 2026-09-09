@@ -15,8 +15,8 @@ Canonical repo: https://github.com/508-dev/508-devkit
 - Root files provide broadly useful hygiene: agent instructions, shell
   entrypoints, worktree-safe ports, Docker Compose examples, GitHub templates,
   dependency cooldowns, and docs.
-- `stacks/` contains language/runtime convention packs. TypeScript, Python, and
-  Ruby are examples, not universal defaults.
+- `stacks/` contains language/runtime convention packs. TypeScript, Python,
+  Ruby, and Android are examples, not universal defaults.
 - `extras/` contains opt-in add-ons such as Dockerfiles, dev containers,
   object storage, CODEOWNERS, Gitleaks, Dependency Review, and TODO-to-issue.
 - `.context/` is workspace-local agent scratch and must not be committed.
@@ -40,6 +40,8 @@ example app, or design-history document.
    - `pyproject.toml`, `uv.lock` when Python is present.
    - `Gemfile`, `Gemfile.lock`, `.ruby-version`, `gems.rb`, and `gems.locked`
      when Ruby is present.
+   - `build.gradle.kts`, `settings.gradle.kts`, `gradle/libs.versions.toml`
+     when native Android is present.
    - `package.json`, `bun.lock`, `pnpm-lock.yaml`, `bunfig.toml`, `pnpm-workspace.yaml`.
    - Compose files.
    - `.github/workflows`.
@@ -64,6 +66,13 @@ example app, or design-history document.
    - Use the Ruby stack only when the target repo is Ruby or the user asks for
      Ruby conventions. Treat Rails and Rack paths as adaptive examples, not
      requirements.
+   - Use the Android stack only when the target repo is a native Android app.
+     It has no app scaffold — only release/versioning/publishing conventions
+     (release-please, GitHub Actions release pipeline, Google Play, F-Droid)
+     and a list of recurring architecture decisions to open a `DECISIONS.md`
+     entry against. Confirm F-Droid distribution is an actual goal before
+     applying its GPL-3/free-software-dependency constraint or F-Droid
+     publishing pipeline.
    - Use Drizzle examples only when TypeScript-side database access is wanted
      and Drizzle fits the repo. Keep an existing data-access layer when one is
      already established.
@@ -162,3 +171,15 @@ Before writing Bundler dependency cooldowns, run `bundle --version`.
 newer. If the target machine has an older Bundler, ask before upgrading it. Once
 cooldown is added, pin the compatible Bundler version in `Gemfile.lock` with
 `bundle lock --bundler=4.0.13` or newer.
+
+## Android Release Versioning
+
+Never hand-edit `versionCode`, `versionName`, or `CHANGELOG.md` in a repo
+using `stacks/android`. `version.txt` is the source of truth; change that and
+run `scripts/sync-version.sh`, which derives `versionCode` as
+`major * 1000000 + minor * 1000 + patch` and keeps both values as plain
+literals in `app/build.gradle.kts` — F-Droid's update bot regex-parses them
+textually, so turning them into an expression silently ends automatic
+F-Droid releases. See `stacks/android/README.md` for the full release model
+(release-please, the two-jobs-in-one-workflow-run gotcha, and Play/F-Droid
+publishing).
