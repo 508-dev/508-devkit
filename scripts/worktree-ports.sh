@@ -17,7 +17,7 @@ usage() {
 
 worktree_root() {
   if root="$(git rev-parse --show-toplevel 2>/dev/null)"; then
-    printf '%s\n' "$root"
+    CDPATH= cd "$root" && pwd -P
   else
     pwd -P
   fi
@@ -66,6 +66,19 @@ port_block() {
   value="$(hex_to_decimal "$prefix")"
   blocks=$((SPAN / PORT_BLOCK_SIZE))
   echo $((BASE_PORT + ((value % blocks) * PORT_BLOCK_SIZE)))
+}
+
+compose_project_name() {
+  root="$(worktree_root)"
+  project="$(basename "$root" | tr -cs 'A-Za-z0-9' '-' | tr 'A-Z' 'a-z' | sed 's/^-*//; s/-*$//')"
+  if [ -z "$project" ]; then
+    project="worktree"
+  fi
+
+  digest="$(hash_hex "$root")"
+  prefix="$(printf '%s' "$digest" | cut -c 1-8)"
+  value="$(hex_to_decimal "$prefix")"
+  printf '%s-%04d\n' "$project" "$((value % 10000))"
 }
 
 is_positive_integer() {
@@ -217,11 +230,13 @@ calculate_ports() {
   WEB_URL="http://127.0.0.1:${WEB_PORT}"
   WEB_API_BASE_URL="http://127.0.0.1:${API_PORT}"
   OTEL_EXPORTER_OTLP_ENDPOINT="http://127.0.0.1:${OTEL_HTTP_PORT}"
+  COMPOSE_PROJECT_NAME="$(compose_project_name)"
 }
 
 print_env() {
   prefix="$1"
   calculate_ports
+  printf '%sCOMPOSE_PROJECT_NAME=%s\n' "$prefix" "$COMPOSE_PROJECT_NAME"
   printf '%sWEB_URL=%s\n' "$prefix" "$WEB_URL"
   printf '%sWEB_PORT=%s\n' "$prefix" "$WEB_PORT"
   printf '%sAPI_PORT=%s\n' "$prefix" "$API_PORT"
@@ -242,6 +257,7 @@ export_env() {
   export POSTGRES_HOST_PORT REDIS_HOST_PORT
   export OTEL_HTTP_PORT POSTGRES_URL DATABASE_URL REDIS_URL
   export WEB_URL WEB_API_BASE_URL OTEL_EXPORTER_OTLP_ENDPOINT
+  export COMPOSE_PROJECT_NAME
 }
 
 has_override() {
