@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Beta-only override of the app label. Copy to
+     app/src/beta/res/values/strings.xml (drop the .example suffix) and replace
+     "Example App" with the real app name. The `beta` build type automatically
+     uses the src/beta/ source set, so this value wins over the base app_name
+     for beta builds only. -->
+<resources>
+    <string name="app_name">Example App Beta</string>
+</resources>

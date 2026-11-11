@@ -83,3 +83,17 @@ Decision: the devkit owns topology and policy, not permanent version freshness.
 Why: frozen files age. Agents should preserve the repo's decisions while verifying current tool versions, action SHAs, and API docs when applying the devkit to a target repo.
 
 Deviate when: working fully offline. In that case, copy the known-good pinned versions and document that currency was not verified.
+
+## Per-Branch Beta Builds
+
+Decision: build a separately signed, side-by-side-installable beta app for every non-release branch, publish each build as a GitHub pre-release tagged `beta-<branch>-<run>`, and use the workflow `run_number` as its `versionCode`.
+
+Why: a reviewer should be able to install a feature branch on the same phone that runs production without uninstalling anything, and update clients need a new release to notice a new build. Each element of the design exists to keep that safe and cheap:
+
+- **Separate application ID.** The beta build type adds `.beta` as an `applicationIdSuffix`, so the beta app is a different package that installs next to production rather than replacing it.
+- **Separate key.** A workflow that runs on arbitrary branches must never hold the release key, so betas sign with a dedicated `BETA_*` key and fall back to the debug key when none is configured. Losing the beta key strands only beta installs.
+- **A unique tag per build, `run_number` as `versionCode`.** `github.run_number` increases across branches — unlike anything derived from a branch or commit — so any newer beta installs over an older one, and a fresh tag per build is what lets update clients notice the update. This is an output-level override only: the literal `versionCode` F-Droid parses stays untouched.
+- **The F-Droid tag filter.** A bare `UpdateCheckMode: Tags` considers every tag, including `beta-*`, so a beta tag carrying the same versionCode as a release, created after it, could be chosen as the build source. The fdroiddata metadata restricts the pattern to release tags only.
+- **The delete-concurrency pitfall.** GitHub runs `delete` events from the default branch, so `github.ref` is `main` for every branch deletion; without keying the concurrency group by the deleted ref, deleting two branches at once cancels one of their cleanups.
+
+Deviate when: a repo has no need for on-branch builds — it already has a different preview or distribution channel, or nobody installs side-loads. Then skip the beta workflow and keep only the stable release pipeline.
