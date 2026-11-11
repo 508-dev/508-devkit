@@ -363,6 +363,47 @@ an installed app with a differently-signed APK, so losing the keystore or its
 password means every existing user has to uninstall and reinstall, losing
 their local data. Back it up offline and off any development machine.
 
+### Generating the key and storing it in `pass`
+
+```bash
+keytool -genkeypair -v -keystore release.keystore -alias <app-slug> \
+  -keyalg RSA -keysize 2048 -validity 10000
+base64 -w0 release.keystore
+```
+
+Store the signing values and the release-please token in `pass` under
+`508/android/<app-slug>/`, one entry per secret, **named exactly as the
+secret appears in GitHub** — not a shorthand:
+
+```bash
+pass insert 508/android/<app-slug>/RELEASE_KEYSTORE_BASE64    # the base64 -w0 output above
+pass insert 508/android/<app-slug>/RELEASE_KEYSTORE_PASSWORD
+pass insert 508/android/<app-slug>/RELEASE_KEY_ALIAS           # the -alias value above
+pass insert 508/android/<app-slug>/RELEASE_KEY_PASSWORD        # same value as RELEASE_KEYSTORE_PASSWORD — PKCS12 has no separate key password
+pass insert 508/android/<app-slug>/RELEASE_PLEASE_TOKEN
+```
+
+Naming the `pass` entry after the GitHub secret, not a shorthand, is the
+point: `pass show 508/android/<app-slug>/<SECRET_NAME>` then works the same
+way for every app, with no per-app naming to remember or get wrong when
+copying a value into GitHub.
+
+Never reuse one app's keystore for another. The signing key is permanent
+identity tied to that app's package name — Android won't let a differently
+signed APK update an install either way — so sharing one across apps buys
+nothing and means one leak threatens every app signed with it.
+
+### `RELEASE_PLEASE_TOKEN` permissions
+
+Create a **fine-grained personal access token**, scoped to this repository
+only, with exactly:
+
+- **Contents: Read and write**
+- **Pull requests: Read and write**
+
+Store it in `pass` alongside the signing values (see above), then add it to
+GitHub under the same `Prod` environment as the rest — see "Secrets" above.
+
 ## Docs To Write In The Target Repo
 
 This stack intentionally does not ship `docs/deployment.md`,
