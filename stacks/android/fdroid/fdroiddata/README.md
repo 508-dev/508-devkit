@@ -19,12 +19,22 @@ context here instead, in the target repo's copy of this README.
 - **Nothing in the target repo pushes to f-droid.org.** It builds and signs on
   its own infrastructure, on its own schedule, with its own key. This file is
   read once at merge time and from then on only by their bot.
-- **`UpdateCheckMode: Tags`** makes that bot watch the repo for new tags.
-  Deliberately no tag pattern after it if release-please's `package-name` puts
-  a component prefix on every tag it cuts (e.g. `example-v0.1.2`, not
-  `v0.1.2`) — a pattern like `v*` would match a hand-cut baseline tag and miss
-  every real release since. Only the very first, hand-tagged baseline release
-  (used to seed release-please before it had ever run) is bare.
+- **`UpdateCheckMode: Tags ^example-v`** makes that bot watch the repo for new
+  stable release tags and ignore the per-branch `beta-*` tags. The pattern must
+  match exactly the tags the project's `release-please-config.json` produces:
+  `^v` when tags are bare `v1.2.3`, or `^<component>-v` when a component is
+  included in the tag — here release-please's `package-name` is `example`, so
+  it cuts `example-v0.1.2`, not `v0.1.2`. The pattern is not optional: per-branch
+  beta builds publish `beta-*` pre-release tags, and a bare `UpdateCheckMode:
+  Tags` considers *every* tag, so a `beta-*` tag carrying the same versionCode
+  as a release, created after it, could be chosen as the build source for a
+  feature branch. Only the very first, hand-tagged baseline release is bare
+  and deliberately excluded.
+- **Apps already on f-droid.org must open an fdroiddata merge request to add
+  or change this pattern.** f-droid.org's bot re-reads the committed metadata
+  on every run; changing the pattern locally does nothing until the new value
+  is merged into their `fdroiddata` repo. The same comment-free rule applies to
+  that MR as to the initial submission.
 - **`AutoUpdateMode: Version`** (no tag pattern after it) makes it read
   `versionName`/`versionCode` out of `app/build.gradle.kts` at that tag and
   append a new `Builds:` entry itself — the reason those two values have to

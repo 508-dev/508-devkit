@@ -16,6 +16,6 @@ Repo: https://github.com/508-dev/example.git
 Builds: []
 
 AutoUpdateMode: Version
-UpdateCheckMode: Tags
+UpdateCheckMode: Tags ^example-v
 CurrentVersion: 0.1.0
 CurrentVersionCode: 1000

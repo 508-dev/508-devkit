@@ -21,13 +21,21 @@ conventions). Where they differ, the reasons are called out below.
   from `version.txt`.
 - `scripts/fdroid-publish.sh`: publishes a signed APK to a self-hosted F-Droid
   repository on `gh-pages`.
+- `scripts/setup-beta-signing.sh`: generates the separate beta signing key and
+  (with `--repo`) installs its four `BETA_*` GitHub secrets.
 - `github/release.yml.example`, `github/pr-title.yml.example`: the release
   pipeline and the PR-title gate it depends on.
+- `github/beta.yml.example`: per-branch beta builds — a separately signed,
+  side-by-side-installable app for every non-main branch, published as a
+  GitHub pre-release and cleaned up when its branch is deleted.
 - `release-please-config.json.example`: release-please config for a
   single-package Android repo.
 - `version.txt.example`: seed version file.
 - `keystore.properties.example`: local release-signing config, mirrored by
   the CI environment variables in `release.yml`.
+- `src/beta/res/`, `docs/beta-builds.md.example`: the beta app's label and
+  launcher-colour override, and the user-facing beta-builds doc to copy into
+  the target repo.
 - `fastlane/metadata/android/en-US/`: the one place store copy is written —
   Play, the self-hosted F-Droid repo, and the f-droid.org submission all read
   from it.
@@ -48,13 +56,17 @@ Every example file below uses the package `dev.co508.example`, app slug
 consistently when copying files in:
 
 ```bash
-mkdir -p scripts fastlane/metadata/android/en-US/changelogs fdroid/metadata fdroid/fdroiddata .github/workflows
+mkdir -p scripts fastlane/metadata/android/en-US/changelogs fdroid/metadata fdroid/fdroiddata .github/workflows app/src/beta/res/values app/src/beta/res/drawable
 cp stacks/android/scripts/*.sh scripts/
 cp stacks/android/version.txt.example version.txt
 cp stacks/android/release-please-config.json.example .release-please-config.json
 cp stacks/android/keystore.properties.example .
 cp stacks/android/github/release.yml.example .github/workflows/release.yml
 cp stacks/android/github/pr-title.yml.example .github/workflows/pr-title.yml
+cp stacks/android/github/beta.yml.example .github/workflows/beta.yml
+cp stacks/android/docs/beta-builds.md.example docs/beta-builds.md
+cp stacks/android/src/beta/res/values/strings.xml.example app/src/beta/res/values/strings.xml
+cp stacks/android/src/beta/res/drawable/ic_launcher_background.xml.example app/src/beta/res/drawable/ic_launcher_background.xml
 cp -r stacks/android/fastlane .
 cp stacks/android/fdroid/config.yml.example fdroid/config.yml
 cp stacks/android/fdroid/metadata/dev.co508.example.yml.example \
@@ -74,6 +86,11 @@ Then, in every copied file:
 4. Fill in `fastlane/metadata/android/en-US/{title,short_description,
    full_description}.txt` with real store copy.
 5. Rewrite `.release-please-config.json`'s `package-name` to match.
+6. Add the `beta` build type, its signing, and the variant version override
+   from "Beta Builds" below to `app/build.gradle.kts`, and replace `Example App
+   Beta` in `app/src/beta/res/values/strings.xml` with the real app name.
+7. Run `scripts/setup-beta-signing.sh <app-slug>` to generate the beta key, and
+   again with `--repo <owner/repo>` once the GitHub repository exists.
 
 Then read "Release & Versioning" below, set up the repository and secrets it
 describes (`docs/deployment.md` in the target repo should carry a copy of
@@ -259,6 +276,151 @@ Adapt, don't skip, the following before relying on either:
   store accounts are still being set up — don't turn this into a hard
   failure.
 
+## Beta Builds
+
+`github/beta.yml.example` builds a **separate, side-by-side-installable app**
+for every branch except `main`, `gh-pages`, and `release-please--**` branches.
+The point is to let a reviewer or co-founder install a feature branch on the
+same phone that runs production, without uninstalling it. Each build is a
+GitHub pre-release tagged `beta-<branch>-<run>`; deleting a branch removes its
+betas (once `beta.yml` is on the default branch). User-facing install steps —
+including Obtainium — live in `docs/beta-builds.md.example`.
+
+### The build type
+
+The beta app is a build type, not a separate Gradle module. `initWith(release)`
+reuses R8, resource shrinking, and every other release setting; the only
+differences are the `.beta` application ID suffix, the label, and the launcher
+colour. The `beta` build type automatically gets the `src/beta/` source set, so
+`app/src/beta/res/values/strings.xml` and
+`app/src/beta/res/drawable/ic_launcher_background.xml` override their base
+counterparts for beta builds only. `setup-beta-signing.sh` generates the key;
+the workflow passes it in as `EXAMPLE_BETA_KEYSTORE_*` environment variables.
+
+Kotlin DSL:
+
+```kotlin
+// Beta signing is independent of the release key. With no beta credentials the
+// build type falls back to the debug key for local compile checks.
+val betaSigning: Map<String, String>? =
+    mapOf(
+        "storeFile" to "EXAMPLE_BETA_KEYSTORE_FILE",
+        "storePassword" to "EXAMPLE_BETA_KEYSTORE_PASSWORD",
+        "keyAlias" to "EXAMPLE_BETA_KEY_ALIAS",
+        "keyPassword" to "EXAMPLE_BETA_KEY_PASSWORD",
+    ).mapValues { (_, name) -> providers.environmentVariable(name).orNull }
+        .takeIf { material -> material.values.none { it.isNullOrBlank() } }
+        ?.mapValues { (_, value) -> value!! }
+
+val betaVersionCode = providers.environmentVariable("EXAMPLE_BETA_VERSION_CODE").orNull?.toInt()
+val betaVersionName = providers.environmentVariable("EXAMPLE_BETA_VERSION_NAME").orNull
+
+android {
+    buildTypes {
+        create("beta") {
+            initWith(getByName("release"))
+            applicationIdSuffix = ".beta"
+            signingConfig =
+                betaSigning?.let { material ->
+                    signingConfigs.create("beta") {
+                        storeFile = rootProject.file(material.getValue("storeFile"))
+                        storePassword = material.getValue("storePassword")
+                        keyAlias = material.getValue("keyAlias")
+                        keyPassword = material.getValue("keyPassword")
+                    }
+                } ?: signingConfigs.getByName("debug")
+        }
+    }
+}
+
+// Keep defaultConfig's generated literals untouched for F-Droid. CI overrides
+// only the beta outputs, using its monotonically increasing workflow run number.
+androidComponents {
+    onVariants(selector().withBuildType("beta")) { variant ->
+        variant.outputs.forEach { output ->
+            betaVersionCode?.let { output.versionCode.set(it) }
+            betaVersionName?.let { output.versionName.set(it) }
+        }
+    }
+}
+```
+
+Groovy (`build.gradle`):
+
+```groovy
+def betaSigning = [
+    storeFile: System.getenv('EXAMPLE_BETA_KEYSTORE_FILE'),
+    storePassword: System.getenv('EXAMPLE_BETA_KEYSTORE_PASSWORD'),
+    keyAlias: System.getenv('EXAMPLE_BETA_KEY_ALIAS'),
+    keyPassword: System.getenv('EXAMPLE_BETA_KEY_PASSWORD'),
+].findAll { it.value } as Map
+
+android {
+    buildTypes {
+        beta {
+            initWith release
+            applicationIdSuffix '.beta'
+            signingConfig = betaSigning ? android.signingConfigs.create('beta') {
+                storeFile = rootProject.file(betaSigning.storeFile)
+                storePassword = betaSigning.storePassword
+                keyAlias = betaSigning.keyAlias
+                keyPassword = betaSigning.keyPassword
+            } : android.signingConfigs.debug
+        }
+    }
+}
+
+androidComponents {
+    onVariants(selector().withBuildType('beta')) { variant ->
+        variant.outputs.each { output ->
+            def code = System.getenv('EXAMPLE_BETA_VERSION_CODE')
+            if (code) output.versionCode.set(code.toInteger())
+            def name = System.getenv('EXAMPLE_BETA_VERSION_NAME')
+            if (name) output.versionName.set(name)
+        }
+    }
+}
+```
+
+The Groovy variant reads `System.getenv` directly — `providers` is a
+Kotlin/AGP-API concept that Groovy build scripts don't have, and Groovy scripts
+don't participate in the configuration cache the same way.
+
+**Capacitor and library modules need `matchingFallbacks = ["release"]`.** If
+the app depends on an Android library module that doesn't define a `beta` build
+type (Capacitor plugins, or a shared module), Gradle can't match the `beta`
+consumer variant to a library variant and the build fails with an "Unable to
+find a matching variant" error. Tell the library to satisfy `beta` with its
+`release` variant:
+
+```kotlin
+create("beta") {
+    initWith(getByName("release"))
+    applicationIdSuffix = ".beta"
+    matchingFallbacks += listOf("release")
+    // ...
+}
+```
+
+### versionCode is the workflow run number
+
+The `versionCode` override in `androidComponents` above is the only place the
+beta build's version changes. The literal `versionCode`/`versionName` in
+`defaultConfig` stay untouched, so F-Droid's bot keeps parsing the production
+values. Using `github.run_number` as the beta `versionCode` means it always
+increases across branches, so any newer beta installs over an older one; the
+`versionName` is `<version.txt>-beta.<run>+<short sha>`. The workflow passes
+both through `EXAMPLE_BETA_VERSION_CODE` / `EXAMPLE_BETA_VERSION_NAME`.
+
+### Signing
+
+Betas use their own key (`~/.config/<app-slug>-beta/`, generated by
+`scripts/setup-beta-signing.sh`), stored as repo-level `BETA_*` secrets. The
+release key and its `Prod` environment are never touched by a workflow that
+runs on arbitrary branches. Without `BETA_KEYSTORE_BASE64`, the workflow still
+runs `assembleBeta` as a compile check (using the debug key) and skips
+publishing.
+
 ## Store Publishing
 
 ### Signing
@@ -327,6 +489,13 @@ Run both — they solve different halves of the problem, not the same one.
   fails the job on any diff it produces, and `rewritemeta` unconditionally
   strips every leading comment.
 
+  The metadata's `UpdateCheckMode` must carry a tag pattern (e.g.
+  `Tags ^example-v`) that matches exactly the tags release-please produces,
+  otherwise f-droid.org's bot also considers `beta-*` pre-release tags and can
+  pick a feature branch as the build source for a "stable" release. See
+  `fdroid/fdroiddata/README.md`; apps already on f-droid.org need a further
+  fdroiddata MR to change it.
+
 Both `fastlane/metadata/android/<locale>/` and the F-Droid-specific YAML
 files read from the same store copy so Play, the self-hosted repo, and
 f-droid.org never drift out of sync — keep it that way rather than
@@ -349,6 +518,10 @@ fail only on their builder, never on CI:
 | `RELEASE_KEYSTORE_PASSWORD` | keystore password | as above |
 | `RELEASE_KEY_ALIAS` | key alias within the keystore | as above |
 | `RELEASE_KEY_PASSWORD` | same value as the keystore password — PKCS12 keystores have no separate key password | as above |
+| `BETA_KEYSTORE_BASE64` | the separate beta app signing key, `base64 -w0` of the beta keystore | beta CI only compiles (`assembleBeta`); no pre-release is published |
+| `BETA_KEYSTORE_PASSWORD` | beta keystore password | as above |
+| `BETA_KEY_ALIAS` | key alias within the beta keystore (`<app-slug>-beta`) | as above |
+| `BETA_KEY_PASSWORD` | same value as `BETA_KEYSTORE_PASSWORD` for a PKCS12 beta keystore | as above |
 | `PLAY_SERVICE_ACCOUNT_JSON` | Play Developer API service account, whole JSON file | Play upload is skipped; GitHub Releases and F-Droid still publish |
 | `RELEASE_PLEASE_TOKEN` | fine-grained PAT so the release PR itself triggers CI | falls back to `GITHUB_TOKEN`; the release PR arrives unchecked |
 | `FDROID_KEYSTORE`, `FDROID_KEY_ALIAS`, `FDROID_KEYSTORE_PASS`, `FDROID_KEY_PASS` | signs the self-hosted F-Droid index — same key as `RELEASE_KEYSTORE_*` | self-hosted F-Droid publish is skipped |
@@ -357,6 +530,11 @@ Add these under a GitHub **Environment** (e.g. `Prod`), not repo-level
 Secrets, if the workflow declares `environment: Prod` on the jobs that need
 them (the example does). A secret added to the wrong one of those two places
 doesn't error — the job just runs with `secrets.WHATEVER` silently empty.
+
+The `BETA_*` secrets are the exception: `beta.yml` declares no environment (a
+workflow that runs on arbitrary branches must not see the `Prod` secrets), so
+add those four as **repo-level** secrets instead — `setup-beta-signing.sh
+--repo` does exactly this.
 
 **The signing key cannot be rotated in practice.** Android refuses to update
 an installed app with a differently-signed APK, so losing the keystore or its
@@ -409,7 +587,9 @@ GitHub under the same `Prod` environment as the rest — see "Secrets" above.
 This stack intentionally does not ship `docs/deployment.md`,
 `docs/tooling.md`, or `docs/secrets.md` content — the target repo's copies of
 those (from the devkit root) are meant to be *rewritten* for the app, not
-appended to. Both source apps replaced the generic devkit versions outright:
+appended to. The one exception is `docs/beta-builds.md.example`, which ships
+ready to copy (rename to `docs/beta-builds.md` and replace the slug/package).
+Both source apps replaced the generic devkit versions outright:
 `docs/deployment.md` became the pipeline diagram + versioning + signing +
 Play + F-Droid walkthrough (essentially this section, made concrete with the
 app's real name/package/secrets), `docs/tooling.md` became the Gradle
@@ -439,3 +619,9 @@ generic web-service-shaped versions in place.
   and store submissions are deliberate human decisions.
 - Never print keystore contents or echo a `EXAMPLE_KEYSTORE_*` /
   `FDROID_*` secret value in a workflow step.
+- Keep the beta key separate from the release key, always. A workflow that
+  runs on arbitrary branches must never hold the release signing material;
+  `setup-beta-signing.sh` generates the beta key for this reason and never
+  overwrites an existing one.
+- The beta `versionCode`/`versionName` override is output-level only. Leave
+  the `defaultConfig` literals alone — they are what F-Droid parses.
